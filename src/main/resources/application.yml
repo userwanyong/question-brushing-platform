@@ -5,9 +5,9 @@ spring:
     allow-circular-references: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/qbp #jdbc:mysql://localhost:3306/+自己的数据库架构名称
-    username: root #统一
-    password: 252748377 #自己数据库密码
+    url: jdbc:mysql://8.130.127.131:3306/qbp #jdbc:mysql://localhost:3306/+自己的数据库架构名称
+    username: qbp
+    password: qbp
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml #指定mapper.xml文件位置
