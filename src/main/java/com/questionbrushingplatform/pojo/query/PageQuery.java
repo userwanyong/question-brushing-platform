@@ -13,7 +13,7 @@ public class PageQuery {
     private Integer pageNo=1; //页码
     private Integer pageSize=5; //每页数据条数
     private String sortBy; //排序字段
-    private Boolean isAsc=true; //是否升序
+    private Boolean isAsc=false; //是否升序
 
     /**
      * 转换为MybatisPlus分页对象

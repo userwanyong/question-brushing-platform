@@ -16,31 +16,28 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("user")
-public class User implements Serializable {
+@TableName("question")
+public class Question implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id",type = IdType.AUTO)
-    private Integer id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
-    @TableField("userAccount")
-    private String userAccount;
+    @TableField("title")
+    private String title;
 
-    @TableField("userPassword")
-    private String userPassword;
+    @TableField("content")
+    private String content;
 
-    @TableField("userName")
-    private String userName;
+    @TableField("tags")
+    private String tags;
 
-    @TableField("userAvatar")
-    private String userAvatar;
+    @TableField("answer")
+    private String answer;
 
-    @TableField("userProfile")
-    private String userProfile;
-
-    @TableField("userRole")
-    private String userRole;
+    @TableField("userId")
+    private Long userId;
 
     @TableField("editTime")
     private LocalDateTime editTime;
@@ -53,5 +50,24 @@ public class User implements Serializable {
 
     @TableField("isDelete")
     private Integer isDelete;
+
+    @TableField("reviewStatus")
+    private Integer reviewStatus;
+
+    @TableField("reviewMessage")
+    private String reviewMessage;
+
+    @TableField("reviewerId")
+    private Long reviewerId;
+
+    @TableField("reviewTime")
+    private LocalDateTime reviewTime;
+
+    @TableField("priority")
+    private Integer priority;
+
+    @TableField("questionBankId")
+    private Integer questionBankId;
+
 
 }

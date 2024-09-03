@@ -45,6 +45,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     public void isAdmin() {
         Long currentId = BaseContext.getCurrentId();
         User dbUser = userMapper.selectById(currentId);
+        if (dbUser == null) {
+            throw new BaseException(MessageConstant.USER_NOT_FOUND);
+        }
         if (!dbUser.getUserRole().equals("admin")){
             throw new BaseException(MessageConstant.USER_NOT_ALLOWED);
         }
@@ -123,19 +126,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
      * @return
      */
     public PageDTO<UserVO> selectByPage(UserQuery userQuery) {
-        // 1.构建条件
+        // 1.构建基础查询条件 默认是按创建时间降序排序，如果指定了sortBy和isAsc（必须先指定sortBy,isAsc才生效），则按指定的排序和顺序排序
         Page<User> page = userQuery.toMpPage("createTime", false);
         // 2.分页查询
         Page<User> p = lambdaQuery()
                 .like(userQuery.getUserAccount()!=null,User::getUserAccount,userQuery.getUserAccount())
                 .like(userQuery.getUserName()!=null,User::getUserName,userQuery.getUserName())
-                .like(userQuery.getUserRole()!=null,User::getUserRole,userQuery.getUserRole())
+                .eq(userQuery.getUserRole()!=null,User::getUserRole,userQuery.getUserRole())
                 .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getCreateTime,userQuery.getStartTime(),userQuery.getEndTime())
                 .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getUpdateTime,userQuery.getStartTime(),userQuery.getEndTime())
                 .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getEditTime,userQuery.getStartTime(),userQuery.getEndTime())
                 .page(page);
         // 3.封装VO结果
-        return PageDTO.of(page, UserVO.class);
+        return PageDTO.of(p, UserVO.class);
     }
 
     /**
