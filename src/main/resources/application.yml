@@ -5,12 +5,12 @@ spring:
     allow-circular-references: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://8.130.127.131:3306/qbp
-#    username: qbp
-#    password: qbp
-    url: jdbc:mysql://localhost:3306/qbp
-    username: root
-    password: 252748377
+    url: jdbc:mysql://8.130.127.131:3306/qbp
+    username: qbp
+    password: qbp
+    # url: jdbc:mysql://localhost:3306/qbp
+    # username: root
+    # password: 252748377
 
 
 mybatis-plus:
