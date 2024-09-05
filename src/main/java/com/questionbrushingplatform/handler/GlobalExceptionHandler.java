@@ -1,6 +1,7 @@
 package com.questionbrushingplatform.handler;
 
 
+import cn.dev33.satoken.util.SaResult;
 import com.questionbrushingplatform.common.constant.MessageConstant;
 import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.common.result.Result;
@@ -45,6 +46,17 @@ public class GlobalExceptionHandler {
             return Result.error(MessageConstant.UNKNOWN_ERROR);
         }
 
+    }
+
+    /**
+     * 处理全局saToken异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler
+    public SaResult handlerException(Exception e) {
+        e.printStackTrace();
+        return SaResult.error(e.getMessage());
     }
 
 }

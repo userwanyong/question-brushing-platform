@@ -1,12 +1,9 @@
 package com.questionbrushingplatform.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
-import com.questionbrushingplatform.common.constant.JwtClaimsConstant;
 import com.questionbrushingplatform.common.constant.MessageConstant;
-import com.questionbrushingplatform.common.context.BaseContext;
-import com.questionbrushingplatform.common.properties.JwtProperties;
 import com.questionbrushingplatform.common.result.Result;
-import com.questionbrushingplatform.common.utils.JwtUtil;
 import com.questionbrushingplatform.pojo.dto.LoginAndRegisterDTO;
 import com.questionbrushingplatform.pojo.dto.UserAddDTO;
 import com.questionbrushingplatform.pojo.entity.User;
@@ -22,8 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 @RestController
 @RequestMapping("/web")
@@ -33,8 +29,8 @@ public class WebController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private JwtProperties jwtProperties;
+//    @Autowired
+//    private JwtProperties jwtProperties;
 
     /**
      * 登录
@@ -46,14 +42,15 @@ public class WebController {
     public Result<LoginVO> login(@RequestBody LoginAndRegisterDTO loginAndRegisterDTO) {
 
         User user=userService.login(loginAndRegisterDTO);
+        StpUtil.login(user.getId());
 
         //登录成功后，生成jwt令牌
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(JwtClaimsConstant.USER_ID, user.getId());
-        String token = JwtUtil.createJWT(
-                jwtProperties.getUserSecretKey(),
-                jwtProperties.getUserTtl(),
-                claims);
+//        Map<String, Object> claims = new HashMap<>();
+//        claims.put(JwtClaimsConstant.USER_ID, user.getId());
+//        String token = JwtUtil.createJWT(
+//                jwtProperties.getUserSecretKey(),
+//                jwtProperties.getUserTtl(),
+//                claims);
 
         LoginVO loginVO = LoginVO.builder()
                 .id(user.getId())
@@ -66,7 +63,7 @@ public class WebController {
                 .createTime(user.getCreateTime())
                 .editTime(user.getEditTime())
                 .updateTime(user.getUpdateTime())
-                .token(token)
+//                .token(token)
                 .build();
 
         return Result.success(loginVO);
@@ -94,7 +91,7 @@ public class WebController {
     @PostMapping("/logout")
     @ApiOperation(value = "退出登录")
     public Result<String> logout() {
-        BaseContext.removeCurrentId();
+        StpUtil.logout();
         return Result.success(MessageConstant.USER_LOGOUT_SUCCESS);
     }
 

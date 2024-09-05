@@ -40,7 +40,7 @@ public class QuestionBankController {
     @ApiOperation("新增题库")
     public Result add(@RequestBody QuestionBankAddDTO questionBankAddDTO) {
         //判断是否为管理员
-        userService.isAdmin();
+//        userService.isAdmin();
         questionBankService.add(questionBankAddDTO);
         return Result.success("新增成功");
     }
@@ -54,7 +54,7 @@ public class QuestionBankController {
     @ApiOperation("根据id删除题库")
     public Result deleteById(@PathVariable Long id) {
         //判断是否为管理员
-        userService.isAdmin();
+//        userService.isAdmin();
         questionBankService.deleteById(id);
         return Result.success("删除成功");
     }
@@ -69,7 +69,7 @@ public class QuestionBankController {
     @ApiOperation("批量删除题库")
     public Result deleteByIds(@RequestBody Long[] ids) {
         //判断是否为管理员
-        userService.isAdmin();
+//        userService.isAdmin();
         questionBankService.deleteByIds(ids);
         return Result.success("删除成功");
     }
@@ -84,7 +84,7 @@ public class QuestionBankController {
     @ApiOperation("根据id查询题库")
     public Result getById(@PathVariable Long id) {
         //判断是否为管理员
-        userService.isAdmin();
+//        userService.isAdmin();
         return Result.success(questionBankService.getById(id));
     }
 
@@ -97,7 +97,7 @@ public class QuestionBankController {
     @ApiOperation("分页查询题库")
     public PageDTO<QuestionBankVO> selectByPage(QuestionBankQuery questionBankQuery) {
         //判断是否为管理员
-        userService.isAdmin();
+//        userService.isAdmin();
         PageDTO<QuestionBankVO> page=questionBankService.selectByPage(questionBankQuery);
         return page;
     }
@@ -111,7 +111,7 @@ public class QuestionBankController {
     @ApiOperation("修改题库")
     public Result update(@RequestBody QuestionBankAddDTO questionBankAddDTO) {
         //判断是否为管理员
-        userService.isAdmin();
+//        userService.isAdmin();
         QuestionBank questionBank = new QuestionBank();
         BeanUtils.copyProperties(questionBankAddDTO,questionBank);
         questionBank.setUpdateTime(LocalDateTime.now());

@@ -37,10 +37,10 @@ public interface UserService extends IService<User> {
      */
     void updateTimeById(Long id);
 
-    /**
-     * 判断是否为管理员
-     */
-    void isAdmin();
+//    /**
+//     * 判断是否为管理员
+//     */
+//    void isAdmin();
 
     /**
      * 修改密码

@@ -1,11 +1,12 @@
 package com.questionbrushingplatform.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.questionbrushingplatform.common.constant.MessageConstant;
-import com.questionbrushingplatform.common.context.BaseContext;
+
 import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.mapper.QuestionBankMapper;
 import com.questionbrushingplatform.mapper.QuestionMapper;
@@ -62,7 +63,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         }
         QuestionBank questionBank = new QuestionBank();
         BeanUtils.copyProperties(questionBankAddDTO, questionBank);
-        questionBank.setUserId(BaseContext.getCurrentId());
+        questionBank.setUserId(StpUtil.getLoginIdAsLong());
         questionBankMapper.insert(questionBank);
 
     }

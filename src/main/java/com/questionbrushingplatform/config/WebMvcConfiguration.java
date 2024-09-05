@@ -1,9 +1,10 @@
 package com.questionbrushingplatform.config;
 
+import cn.dev33.satoken.interceptor.SaInterceptor;
+import cn.dev33.satoken.router.SaRouter;
+import cn.dev33.satoken.stp.StpUtil;
 import com.questionbrushingplatform.common.json.JacksonObjectMapper;
-import com.questionbrushingplatform.interceptor.JwtTokenUserInterceptor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -28,19 +29,39 @@ import java.util.List;
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
 
-    @Autowired
-    private JwtTokenUserInterceptor jwtTokenUserInterceptor;
+//    @Autowired
+//    private JwtTokenUserInterceptor jwtTokenUserInterceptor;
+
 
     /**
      * 注册自定义拦截器
      *
      * @param registry
      */
-    protected void addInterceptors(InterceptorRegistry registry) {
-        log.info("开始注册自定义拦截器...");
-        registry.addInterceptor(jwtTokenUserInterceptor)
-                .addPathPatterns("/user/**","/questionBank/**","/question/**")
-                .excludePathPatterns("/web/**");
+//    protected void addInterceptors(InterceptorRegistry registry) {
+//        log.info("开始注册自定义拦截器...");
+//        registry.addInterceptor(jwtTokenUserInterceptor)
+//                .addPathPatterns("/user/**","/questionBank/**","/question/**")
+//                .excludePathPatterns("/web/**");
+//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // 注册 Sa-Token 拦截器，打开注解式鉴权功能
+        registry.addInterceptor(new SaInterceptor(handler -> {
+
+                    // 角色校验 -- 拦截以 questionBank 开头的路由，必须是 admin 角色才可以通过认证
+                    SaRouter.match("/questionBank/**", r -> StpUtil.checkRole("admin"));
+
+                    SaRouter.match("/user/add", r -> StpUtil.checkRole("admin"));
+                    SaRouter.match("/user/deleteById/{id}", r -> StpUtil.checkRole("admin"));
+                    SaRouter.match("/user/deleteByIds", r -> StpUtil.checkRole("admin"));
+                    SaRouter.match("/user/getById/{id}", r -> StpUtil.checkRole("admin"));
+                    SaRouter.match("/user/selectByPage", r -> StpUtil.checkRole("admin"));
+                    SaRouter.match("/user/update", r -> StpUtil.checkRole("admin"));
+
+
+
+                })).addPathPatterns("/**"); //将自定义拦截器应用于所有路径
     }
 
     /**

@@ -1,12 +1,13 @@
 package com.questionbrushingplatform.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.questionbrushingplatform.common.constant.MessageConstant;
 import com.questionbrushingplatform.common.constant.PasswordConstant;
-import com.questionbrushingplatform.common.context.BaseContext;
+
 import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.mapper.UserMapper;
 import com.questionbrushingplatform.pojo.dto.LoginAndRegisterDTO;
@@ -39,19 +40,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         userMapper.updateById(user);
     }
 
-    /**
-     * 判断是否为管理员
-     */
-    public void isAdmin() {
-        Long currentId = BaseContext.getCurrentId();
-        User dbUser = userMapper.selectById(currentId);
-        if (dbUser == null) {
-            throw new BaseException(MessageConstant.USER_NOT_FOUND);
-        }
-        if (!dbUser.getUserRole().equals("admin")){
-            throw new BaseException(MessageConstant.USER_NOT_ALLOWED);
-        }
-    }
+//    /**
+//     * 判断是否为管理员
+//     */
+//    public void isAdmin() {
+//        Long currentId = BaseContext.getCurrentId();
+//        User dbUser = userMapper.selectById(currentId);
+//        if (dbUser == null) {
+//            throw new BaseException(MessageConstant.USER_NOT_FOUND);
+//        }
+//        if (!dbUser.getUserRole().equals("admin")){
+//            throw new BaseException(MessageConstant.USER_NOT_ALLOWED);
+//        }
+//    }
 
     /**
      * 修改密码
@@ -68,7 +69,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         if (userUpdatePasswordDTO.getConfirmPassword().length() < 6 || userUpdatePasswordDTO.getConfirmPassword().length() > 16){
             throw new BaseException(MessageConstant.ERROR_DATABASE);
         }
-        Long currentId = BaseContext.getCurrentId();
+        Long currentId = StpUtil.getLoginIdAsLong();
         User user = userMapper.selectById(currentId);
         if (!user.getUserPassword().equals(userUpdatePasswordDTO.getOldPassword())){
             throw new BaseException(MessageConstant.OLD_PASSWORD_ERROR);
