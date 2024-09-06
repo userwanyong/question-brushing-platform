@@ -12,6 +12,13 @@ spring:
     username: root
     password: 252748377
 
+  redis:
+    database: 1
+    host: localhost
+    port: 6379
+    timeout: 5000
+    password: 252748377
+
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml #指定mapper.xml文件位置

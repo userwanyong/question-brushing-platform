@@ -9,6 +9,10 @@ import com.questionbrushingplatform.pojo.entity.User;
 import com.questionbrushingplatform.pojo.query.UserQuery;
 import com.questionbrushingplatform.pojo.vo.UserVO;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
 
 public interface UserService extends IService<User> {
     /**
@@ -47,4 +51,21 @@ public interface UserService extends IService<User> {
      * @param userUpdatePasswordDTO
      */
     void updatePassword(UserUpdatePasswordDTO userUpdatePasswordDTO);
+
+
+    /**
+     * 添加用户签到记录
+     * @param userId 用户id
+     * @return 当前用户是否已签到成功
+     */
+    boolean addUserSignIn(Long userId);
+
+
+    /**
+     * 获取用户某年份签到记录
+     * @param userId 用户id
+     * @param year 年份（为空表示当前年份）
+     * @return 签到记录
+     */
+    List<Integer> getUserSignInRecord(Long userId, Integer year);
 }

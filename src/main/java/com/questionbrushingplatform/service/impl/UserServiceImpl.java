@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.questionbrushingplatform.common.constant.MessageConstant;
 import com.questionbrushingplatform.common.constant.PasswordConstant;
-
+import com.questionbrushingplatform.common.constant.RedisConstant;
 import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.mapper.UserMapper;
 import com.questionbrushingplatform.pojo.dto.LoginAndRegisterDTO;
@@ -18,14 +18,22 @@ import com.questionbrushingplatform.pojo.entity.User;
 import com.questionbrushingplatform.pojo.query.UserQuery;
 import com.questionbrushingplatform.pojo.vo.UserVO;
 import com.questionbrushingplatform.service.UserService;
+import org.redisson.api.RBitSet;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
+import java.util.*;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements UserService {
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Autowired
     private UserMapper userMapper;
@@ -56,7 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
 
     /**
      * 修改密码
-     * @param userUpdatePasswordDTO
+     * @param userUpdatePasswordDTO 用户修改密码信息
      */
     public void updatePassword(UserUpdatePasswordDTO userUpdatePasswordDTO) {
         //要保证密码长度符合规定
@@ -85,7 +93,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
 
     /**
      * 新增用户
-     * @param userAddDTO
+     * @param userAddDTO 用户新增信息
      */
     public void add(UserAddDTO userAddDTO) {
         //限制账号长度为11位
@@ -144,7 +152,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
 
     /**
      * 登录
-     * @param loginAndRegisterDTO
+     * @param loginAndRegisterDTO 用户登录信息
      */
     public User login(LoginAndRegisterDTO loginAndRegisterDTO) {
         if (StrUtil.isBlank(loginAndRegisterDTO.getUserAccount())||StrUtil.isBlank(loginAndRegisterDTO.getUserPassword())){
@@ -163,6 +171,55 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
             throw new BaseException(MessageConstant.ACCOUNT_OR_PASSWORD_NOT_FOUND);
         }
         return dbUser;
+    }
+
+    /**
+     * 添加用户签到记录
+     * @param userId 用户id
+     * @return 当前用户是否已签到成功
+     */
+    public boolean addUserSignIn(Long userId) {
+        LocalDate date = LocalDate.now();
+        String key = RedisConstant.getUserSignInRedisKey(date.getYear(), userId);
+        //查询Redis的BitMap
+        RBitSet bitSet = redissonClient.getBitSet(key);
+        //获取当前如期是一年中的第几天，作为偏移量（从1开始计数）
+        int offset = date.getDayOfYear();
+        //查询当天是否签到
+        if (!bitSet.get(offset)){
+            //如果当天未签到，则签到
+            bitSet.set(offset, true);
+        }
+        //当天已签到
+        return true;
+    }
+
+    /**
+     * 获取用户某年份签到记录
+     * @param userId 用户id
+     * @param year 年份（为空表示当前年份）
+     * @return 签到记录
+     */
+    public List<Integer> getUserSignInRecord(Long userId, Integer year) {
+        if (year == null){
+            LocalDate date = LocalDate.now();
+            year = date.getYear();
+        }
+        String key = RedisConstant.getUserSignInRedisKey(year, userId);
+        //查询Redis的BitMap
+        RBitSet bitSet = redissonClient.getBitSet(key);
+        //加载BitSet到内存中，避免后续读取时发送多次请求
+        BitSet newBitSet = bitSet.asBitSet();
+        //统计签到的日期
+        ArrayList<Integer> list = new ArrayList<>();
+        //从索引0开始查找下一个被设置为1的位
+        int index = newBitSet.nextSetBit(0);
+        while (index >= 0){
+            list.add(index);
+            //从下一位开始继续查找被设为1的位
+            index = newBitSet.nextSetBit(index + 1);
+        }
+        return list;
     }
 
 

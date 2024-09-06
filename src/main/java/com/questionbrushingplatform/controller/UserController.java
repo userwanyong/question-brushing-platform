@@ -18,9 +18,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -176,5 +179,36 @@ public class UserController {
         return Result.success("修改成功");
     }
 
+
+    /**
+     * 添加用户签到记录
+     * @return
+     */
+    @PostMapping("/addSignIn")
+    @ApiOperation("添加用户签到记录")
+    public Result<Boolean> addSignIn() {
+        //必须登录才能签到
+        if (!StpUtil.isLogin()) {
+            return Result.error(MessageConstant.USER_NOT_LOGIN_OR_EXPIRED);
+        }
+        boolean result = userService.addUserSignIn(StpUtil.getLoginIdAsLong());
+        return Result.success(result);
+    }
+
+    /**
+     * 获取用户签到记录
+     * @param year
+     * @return
+     */
+    @GetMapping("/getSignInRecord")
+    @ApiOperation("获取用户签到记录")
+    public Result<List<Integer>> getSignInRecord(Integer year) {
+        //必须登录
+        if (!StpUtil.isLogin()) {
+            return Result.error(MessageConstant.USER_NOT_LOGIN_OR_EXPIRED);
+        }
+        List<Integer> userSignInRecord = userService.getUserSignInRecord(StpUtil.getLoginIdAsLong(), year);
+        return Result.success(userSignInRecord);
+    }
 
 }
