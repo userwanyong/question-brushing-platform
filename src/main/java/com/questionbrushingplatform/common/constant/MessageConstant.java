@@ -5,6 +5,7 @@ package com.questionbrushingplatform.common.constant;
  */
 public class MessageConstant {
     public static final String ERROR_DATABASE = "数据输入不合法";
+    public static final String ERROR_ACCOUNT_AND_PASSWORD = "账号或密码长度不合法";
     public static final String USER_NOT_FOUND = "用户不存在";
     public static final String USER_NOT_LOGIN_OR_EXPIRED = "用户未登录或登录已过期";
     public static final String USER_LOGOUT_SUCCESS = "登出成功";

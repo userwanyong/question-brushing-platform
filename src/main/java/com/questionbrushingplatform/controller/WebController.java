@@ -3,6 +3,7 @@ package com.questionbrushingplatform.controller;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
 import com.questionbrushingplatform.common.constant.MessageConstant;
+import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.common.result.Result;
 import com.questionbrushingplatform.pojo.dto.LoginAndRegisterDTO;
 import com.questionbrushingplatform.pojo.dto.UserAddDTO;
@@ -29,8 +30,7 @@ public class WebController {
 
     @Autowired
     private UserService userService;
-//    @Autowired
-//    private JwtProperties jwtProperties;
+
 
     /**
      * 登录
@@ -44,14 +44,6 @@ public class WebController {
         User user=userService.login(loginAndRegisterDTO);
         StpUtil.login(user.getId());
 
-        //登录成功后，生成jwt令牌
-//        Map<String, Object> claims = new HashMap<>();
-//        claims.put(JwtClaimsConstant.USER_ID, user.getId());
-//        String token = JwtUtil.createJWT(
-//                jwtProperties.getUserSecretKey(),
-//                jwtProperties.getUserTtl(),
-//                claims);
-
         LoginVO loginVO = LoginVO.builder()
                 .id(user.getId())
                 .userAccount(user.getUserAccount())
@@ -63,7 +55,6 @@ public class WebController {
                 .createTime(user.getCreateTime())
                 .editTime(user.getEditTime())
                 .updateTime(user.getUpdateTime())
-//                .token(token)
                 .build();
 
         return Result.success(loginVO);
@@ -78,6 +69,10 @@ public class WebController {
     @PostMapping("/register")
     @ApiOperation(value = "注册")
     public Result<String> register(@RequestBody LoginAndRegisterDTO loginAndRegisterDTO) {
+        //检查一下是否填写了账号和密码
+        if (StrUtil.isBlank(loginAndRegisterDTO.getUserAccount())||StrUtil.isBlank(loginAndRegisterDTO.getUserPassword())){
+            throw new BaseException(MessageConstant.ERROR_ACCOUNT_AND_PASSWORD);
+        }
         UserAddDTO userAddDTO = new UserAddDTO();
         BeanUtils.copyProperties(loginAndRegisterDTO, userAddDTO);
         userService.add(userAddDTO);

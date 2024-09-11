@@ -3,21 +3,21 @@ server:
 spring:
   main:
     allow-circular-references: true
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://8.130.127.131:3306/qbp
-    username: qbp
-    password: qbp
-    # url: jdbc:mysql://localhost:3306/qbp
-    # username: root
-    # password: 252748377
+    url: jdbc:mysql://118.178.229.137:3306/qbp
+    username: root
+    password: KingYen.2004
 
   redis:
     database: 1
-    host: localhost
+    host: 118.178.229.137
     port: 6379
     timeout: 5000
-    password: 252748377
+
+  elasticsearch:
+    uris: http://152.136.135.225:9200
 
 
 mybatis-plus:

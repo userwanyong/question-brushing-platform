@@ -26,8 +26,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Year;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements UserService {
@@ -47,20 +48,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         user.setUpdateTime(LocalDateTime.now());
         userMapper.updateById(user);
     }
-
-//    /**
-//     * 判断是否为管理员
-//     */
-//    public void isAdmin() {
-//        Long currentId = BaseContext.getCurrentId();
-//        User dbUser = userMapper.selectById(currentId);
-//        if (dbUser == null) {
-//            throw new BaseException(MessageConstant.USER_NOT_FOUND);
-//        }
-//        if (!dbUser.getUserRole().equals("admin")){
-//            throw new BaseException(MessageConstant.USER_NOT_ALLOWED);
-//        }
-//    }
 
     /**
      * 修改密码
@@ -117,7 +104,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         }
         //限制密码长度在6-16位
         else if (userAddDTO.getUserPassword().length() < 6 || userAddDTO.getUserPassword().length() > 16){
-            throw new BaseException(MessageConstant.ERROR_DATABASE);
+            throw new BaseException(MessageConstant.ERROR_ACCOUNT_AND_PASSWORD);
         }
         //如果没有输入用户名，则默认用户名为账号
         if (userAddDTO.getUserName()==null||userAddDTO.getUserName().isEmpty()){

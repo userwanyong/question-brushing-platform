@@ -1,4 +1,4 @@
-package com.questionbrushingplatform.pojo.entity;
+package com.questionbrushingplatform.pojo.vo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -9,19 +9,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("question")
-public class Question implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class QuestionVO {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -52,23 +47,11 @@ public class Question implements Serializable {
     @TableField("isDelete")
     private Integer isDelete;
 
-    @TableField("reviewStatus")
-    private Integer reviewStatus;
 
-    @TableField("reviewMessage")
-    private String reviewMessage;
-
-    @TableField("reviewerId")
-    private Long reviewerId;
-
-    @TableField("reviewTime")
-    private LocalDateTime reviewTime;
-
-    @TableField("priority")
-    private Integer priority;
 
     @TableField("questionBankId")
     private Integer questionBankId;
 
 
 }
+

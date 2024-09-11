@@ -29,21 +29,12 @@ import java.util.List;
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
 
-//    @Autowired
-//    private JwtTokenUserInterceptor jwtTokenUserInterceptor;
-
 
     /**
      * 注册自定义拦截器
      *
      * @param registry
      */
-//    protected void addInterceptors(InterceptorRegistry registry) {
-//        log.info("开始注册自定义拦截器...");
-//        registry.addInterceptor(jwtTokenUserInterceptor)
-//                .addPathPatterns("/user/**","/questionBank/**","/question/**")
-//                .excludePathPatterns("/web/**");
-//    }
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 注册 Sa-Token 拦截器，打开注解式鉴权功能
@@ -58,8 +49,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                     SaRouter.match("/user/getById/{id}", r -> StpUtil.checkRole("admin"));
                     SaRouter.match("/user/selectByPage", r -> StpUtil.checkRole("admin"));
                     SaRouter.match("/user/update", r -> StpUtil.checkRole("admin"));
-
-
+                    //TODO 在下面写题目的增删改查校验
 
                 })).addPathPatterns("/**"); //将自定义拦截器应用于所有路径
     }

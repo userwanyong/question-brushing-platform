@@ -1,17 +1,18 @@
 package com.questionbrushingplatform.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.questionbrushingplatform.common.constant.MessageConstant;
 import com.questionbrushingplatform.common.result.Result;
+import com.questionbrushingplatform.pojo.dto.PageDTO;
 import com.questionbrushingplatform.pojo.entity.Question;
+import com.questionbrushingplatform.pojo.query.QuestionQuery;
+import com.questionbrushingplatform.pojo.vo.QuestionVO;
 import com.questionbrushingplatform.service.QuestionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -38,5 +39,17 @@ public class QuestionController {
         return Result.success(question);
     }
 
+    /**
+     * es根据条件查询题目
+     * @param questionQuery
+     * @return
+     */
+    @PostMapping("/search/page/vo")
+    @ApiOperation("根据条件查询题目")
+    public PageDTO<QuestionVO> searchQuestionVOByPage(@RequestBody QuestionQuery questionQuery) {
+
+        Page<Question> questionPage = questionService.searchFromEs(questionQuery);
+        return PageDTO.of(questionPage, QuestionVO.class);
+    }
 
 }
