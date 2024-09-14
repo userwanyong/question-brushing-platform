@@ -22,6 +22,8 @@ import org.redisson.api.RBitSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements UserService {
@@ -38,6 +41,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
 
     @Autowired
     private UserMapper userMapper;
+
 
     /**
      * 通用更新时间
@@ -166,8 +170,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
      * @return 当前用户是否已签到成功
      */
     public boolean addUserSignIn(Long userId) {
+
         LocalDate date = LocalDate.now();
         String key = RedisConstant.getUserSignInRedisKey(date.getYear(), userId);
+
         //查询Redis的BitMap
         RBitSet bitSet = redissonClient.getBitSet(key);
         //获取当前如期是一年中的第几天，作为偏移量（从1开始计数）
@@ -176,6 +182,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         if (!bitSet.get(offset)){
             //如果当天未签到，则签到
             bitSet.set(offset, true);
+            //设置过期时间为下一年的第一天
+//            bitSet.expire(LocalDate.ofYearDay(date.getYear()+1,1).toEpochDay(), TimeUnit.SECONDS);
+            bitSet.expire(6, TimeUnit.DAYS);
         }
         //当天已签到
         return true;
