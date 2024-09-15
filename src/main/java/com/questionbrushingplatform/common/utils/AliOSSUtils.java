@@ -4,12 +4,14 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
 /**
  * 阿里云OSS工具类
+ * @author 永
  */
 @Component
 public class AliOSSUtils {

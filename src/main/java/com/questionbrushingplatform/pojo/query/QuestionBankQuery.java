@@ -1,11 +1,13 @@
 package com.questionbrushingplatform.pojo.query;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
+/**
+ * @author 永
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class QuestionBankQuery extends PageQuery{

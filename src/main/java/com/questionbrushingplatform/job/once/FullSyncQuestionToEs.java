@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  * 全量同步题目到es
+ * @author 永
  */
 @Component
 @Slf4j

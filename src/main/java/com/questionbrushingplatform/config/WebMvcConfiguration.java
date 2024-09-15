@@ -3,12 +3,9 @@ package com.questionbrushingplatform.config;
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
-import com.questionbrushingplatform.common.json.JacksonObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -19,10 +16,9 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
-import java.util.List;
-
 /**
  * 配置类，注册web层相关组件
+ * @author 永
  */
 @Configuration
 @Slf4j
@@ -87,12 +83,12 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      * 拓展springMVC框架的消息转化器
      * @param converters
      */
-    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        //创建一个消息转换器对象
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        //需要为消息转换器设置一个对象转换器，对象转换器可以将java对象序列化为JSON数据
-        converter.setObjectMapper(new JacksonObjectMapper());
-        //将自己的消息转换器加入容器中，并排在0这个第一位置
-        converters.add(0,converter);
-    }
+//    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+//        //创建一个消息转换器对象
+//        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+//        //需要为消息转换器设置一个对象转换器，对象转换器可以将java对象序列化为JSON数据
+//        converter.setObjectMapper(new JacksonObjectMapper());
+//        //将自己的消息转换器加入容器中，并排在0这个第一位置
+//        converters.add(0,converter);
+//    }
 }

@@ -18,13 +18,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * @author 永
+ */
 @RestController
 @RequestMapping("/user")
 @Slf4j
@@ -112,11 +112,23 @@ public class UserController {
     @PutMapping("/updateCurrentInfo")
     @ApiOperation("修改当前用户信息")
     public Result updateCurrentInfo(@RequestBody UserDTO userDTO) {
-        userDTO.setId(StpUtil.getLoginIdAsInt());
         User user = new User();
         BeanUtils.copyProperties(userDTO,user);
+        user.setId(StpUtil.getLoginIdAsLong());
         user.setUpdateTime(LocalDateTime.now());
         userService.updateById(user);
+        return Result.success("修改成功");
+    }
+
+    /**
+     * 修改当前登录用户密码
+     * @param userUpdatePasswordDTO
+     * @return
+     */
+    @PutMapping("/updatePassword")
+    @ApiOperation("修改当前登录用户密码")
+    public Result updatePassword(@RequestBody UserUpdatePasswordDTO userUpdatePasswordDTO) {
+        userService.updatePassword(userUpdatePasswordDTO);
         return Result.success("修改成功");
     }
 
@@ -164,19 +176,6 @@ public class UserController {
 //        userService.isAdmin();
         PageDTO<UserVO> page=userService.selectByPage(userQuery);
         return page;
-    }
-
-
-    /**
-     * 修改当前登录用户密码
-     * @param userUpdatePasswordDTO
-     * @return
-     */
-    @PutMapping("/updatePassword")
-    @ApiOperation("修改当前登录用户密码")
-    public Result updatePassword(@RequestBody UserUpdatePasswordDTO userUpdatePasswordDTO) {
-        userService.updatePassword(userUpdatePasswordDTO);
-        return Result.success("修改成功");
     }
 
 

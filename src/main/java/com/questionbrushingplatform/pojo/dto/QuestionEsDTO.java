@@ -15,6 +15,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * @author 永
+ */
 @Document(indexName = "question")
 @Data
 public class QuestionEsDTO implements Serializable {

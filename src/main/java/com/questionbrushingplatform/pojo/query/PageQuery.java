@@ -7,6 +7,7 @@ import lombok.Data;
 
 /**
  * 分页查询条件
+ * @author 永
  */
 @Data
 public class PageQuery {

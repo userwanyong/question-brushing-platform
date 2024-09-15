@@ -3,11 +3,11 @@ package com.questionbrushingplatform.controller;
 import com.questionbrushingplatform.common.result.Result;
 import com.questionbrushingplatform.pojo.dto.PageDTO;
 import com.questionbrushingplatform.pojo.dto.QuestionBankAddDTO;
+import com.questionbrushingplatform.pojo.dto.QuestionBankUpdateDTO;
 import com.questionbrushingplatform.pojo.entity.QuestionBank;
 import com.questionbrushingplatform.pojo.query.QuestionBankQuery;
 import com.questionbrushingplatform.pojo.vo.QuestionBankVO;
 import com.questionbrushingplatform.service.QuestionBankService;
-import com.questionbrushingplatform.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 
+/**
+ * @author 永
+ */
 @RestController
 @RequestMapping("/questionBank")
 @Slf4j
@@ -27,8 +30,6 @@ public class QuestionBankController {
 
     @Autowired
     private QuestionBankService questionBankService;
-    @Autowired
-    private UserService userService;
 
 
     /**
@@ -74,6 +75,23 @@ public class QuestionBankController {
         return Result.success("删除成功");
     }
 
+    /**
+     * 修改题库
+     * @param questionBankUpdateDTO
+     * @return
+     */
+    @PostMapping("/update")
+    @ApiOperation("修改题库")
+    public Result update(@RequestBody QuestionBankUpdateDTO questionBankUpdateDTO) {
+        //判断是否为管理员
+//        userService.isAdmin();
+        questionBankService.isExist(questionBankUpdateDTO.getTitle());
+        QuestionBank questionBank = new QuestionBank();
+        BeanUtils.copyProperties(questionBankUpdateDTO,questionBank);
+        questionBank.setUpdateTime(LocalDateTime.now());
+        questionBankService.updateById(questionBank);
+        return Result.success("修改成功");
+    }
 
     /**
      * 根据id查询题库
@@ -102,21 +120,6 @@ public class QuestionBankController {
         return page;
     }
 
-    /**
-     * 修改题库
-     * @param questionBankAddDTO
-     * @return
-     */
-    @PostMapping("/update")
-    @ApiOperation("修改题库")
-    public Result update(@RequestBody QuestionBankAddDTO questionBankAddDTO) {
-        //判断是否为管理员
-//        userService.isAdmin();
-        QuestionBank questionBank = new QuestionBank();
-        BeanUtils.copyProperties(questionBankAddDTO,questionBank);
-        questionBank.setUpdateTime(LocalDateTime.now());
-        questionBankService.updateById(questionBank);
-        return Result.success("修改成功");
-    }
+
 
 }

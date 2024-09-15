@@ -9,11 +9,12 @@ import com.questionbrushingplatform.pojo.entity.User;
 import com.questionbrushingplatform.pojo.query.UserQuery;
 import com.questionbrushingplatform.pojo.vo.UserVO;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 
+/**
+ * @author 永
+ */
 public interface UserService extends IService<User> {
     /**
      * 新增用户
@@ -21,6 +22,17 @@ public interface UserService extends IService<User> {
      */
     void add(UserAddDTO userAddDTO);
 
+    /**
+     * 修改密码
+     * @param userUpdatePasswordDTO
+     */
+    void updatePassword(UserUpdatePasswordDTO userUpdatePasswordDTO);
+
+    /**
+     * 通用更新时间
+     * @param id
+     */
+    void updateTimeById(Long id);
 
     /**
      * 分页查询用户
@@ -35,23 +47,10 @@ public interface UserService extends IService<User> {
      */
     User login(LoginAndRegisterDTO loginAndRegisterDTO);
 
-    /**
-     * 通用更新时间
-     * @param id
-     */
-    void updateTimeById(Long id);
-
 //    /**
 //     * 判断是否为管理员
 //     */
 //    void isAdmin();
-
-    /**
-     * 修改密码
-     * @param userUpdatePasswordDTO
-     */
-    void updatePassword(UserUpdatePasswordDTO userUpdatePasswordDTO);
-
 
     /**
      * 添加用户签到记录

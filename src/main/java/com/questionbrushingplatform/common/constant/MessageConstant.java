@@ -2,6 +2,7 @@ package com.questionbrushingplatform.common.constant;
 
 /**
  * 信息提示常量类
+ * @author 永
  */
 public class MessageConstant {
     public static final String ERROR_DATABASE = "数据输入不合法";

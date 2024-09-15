@@ -2,6 +2,7 @@ package com.questionbrushingplatform.common.constant;
 
 /**
  * Redis常量
+ * @author 永
  */
 public interface RedisConstant {
 

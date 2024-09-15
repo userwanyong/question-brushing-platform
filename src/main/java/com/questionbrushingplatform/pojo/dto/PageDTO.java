@@ -1,11 +1,11 @@
 package com.questionbrushingplatform.pojo.dto;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import cn.hutool.core.bean.BeanUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  * 分页结果封装
+ * @author 永
  */
 @Data
 @NoArgsConstructor

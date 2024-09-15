@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 /**
  * @author 永
  */
@@ -13,15 +12,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO{
-
+public class QuestionBankUpdateDTO {
+    
     private Long id;
 
-    private String userName;
+    private String title;
 
-    private String userAvatar;
+    private String description;
 
-    private String userProfile;
+    private String picture;
+
+    private Integer priority;
 
 
 }

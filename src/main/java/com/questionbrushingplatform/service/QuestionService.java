@@ -2,11 +2,13 @@ package com.questionbrushingplatform.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.questionbrushingplatform.pojo.dto.QuestionEsDTO;
 import com.questionbrushingplatform.pojo.entity.Question;
 import com.questionbrushingplatform.pojo.query.QuestionQuery;
 
 
+/**
+ * @author 永
+ */
 public interface QuestionService extends IService<Question> {
 
     /**

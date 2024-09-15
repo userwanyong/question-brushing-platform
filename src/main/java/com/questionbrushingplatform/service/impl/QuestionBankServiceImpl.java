@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.questionbrushingplatform.common.constant.MessageConstant;
-
 import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.mapper.QuestionBankMapper;
 import com.questionbrushingplatform.mapper.QuestionMapper;
@@ -14,10 +13,8 @@ import com.questionbrushingplatform.pojo.dto.PageDTO;
 import com.questionbrushingplatform.pojo.dto.QuestionBankAddDTO;
 import com.questionbrushingplatform.pojo.entity.Question;
 import com.questionbrushingplatform.pojo.entity.QuestionBank;
-import com.questionbrushingplatform.pojo.entity.User;
 import com.questionbrushingplatform.pojo.query.QuestionBankQuery;
 import com.questionbrushingplatform.pojo.vo.QuestionBankVO;
-import com.questionbrushingplatform.pojo.vo.UserVO;
 import com.questionbrushingplatform.service.QuestionBankService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +22,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * @author 永
+ */
 @Service
 public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, QuestionBank> implements QuestionBankService {
 
@@ -45,6 +45,19 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
 
     /**
+     * 判断该题库是否已存在
+     * @param title
+     */
+    public void isExist(String title) {
+        LambdaQueryWrapper<QuestionBank> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(QuestionBank::getTitle, title);
+        QuestionBank questionBank = questionBankMapper.selectOne(queryWrapper);
+        if (questionBank != null) {
+            throw new BaseException(MessageConstant.QUESTION_BANK_EXISTS);
+        }
+    }
+
+    /**
      * 新增题库
      * @param questionBankAddDTO
      */
@@ -53,14 +66,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         if (questionBankAddDTO.getTitle() == null|| questionBankAddDTO.getTitle().isEmpty()) {
             throw new BaseException(MessageConstant.QUESTION_BANK_TITLE_NOT_NULL);
         }
-        //先判断题库名是否重复
-        LambdaQueryWrapper<QuestionBank> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(QuestionBank::getTitle, questionBankAddDTO.getTitle());
-        QuestionBank dbQuestionBank = questionBankMapper.selectOne(queryWrapper);
-        //如果重复，抛出异常
-        if (dbQuestionBank != null) {
-            throw new BaseException(MessageConstant.QUESTION_BANK_EXISTS);
-        }
+        isExist(questionBankAddDTO.getTitle());
         QuestionBank questionBank = new QuestionBank();
         BeanUtils.copyProperties(questionBankAddDTO, questionBank);
         questionBank.setUserId(StpUtil.getLoginIdAsLong());

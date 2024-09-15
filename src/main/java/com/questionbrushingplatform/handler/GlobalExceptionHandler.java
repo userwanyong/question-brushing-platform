@@ -13,6 +13,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 /**
  * 全局异常处理器，处理项目中抛出的业务异常
+ * @author 永
  */
 @RestControllerAdvice
 @Slf4j

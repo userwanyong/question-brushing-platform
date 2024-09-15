@@ -6,6 +6,9 @@ import lombok.EqualsAndHashCode;
 import java.time.LocalDateTime;
 
 
+/**
+ * @author 永
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UserQuery extends PageQuery {

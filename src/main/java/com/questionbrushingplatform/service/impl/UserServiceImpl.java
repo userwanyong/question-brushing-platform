@@ -22,8 +22,6 @@ import org.redisson.api.RBitSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,8 +29,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * @author 永
+ */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements UserService {
 
@@ -41,45 +41,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
 
     @Autowired
     private UserMapper userMapper;
-
-
-    /**
-     * 通用更新时间
-     * @param id
-     */
-    public void updateTimeById(Long id) {
-        User user = userMapper.selectById(id);
-        user.setUpdateTime(LocalDateTime.now());
-        userMapper.updateById(user);
-    }
-
-    /**
-     * 修改密码
-     * @param userUpdatePasswordDTO 用户修改密码信息
-     */
-    public void updatePassword(UserUpdatePasswordDTO userUpdatePasswordDTO) {
-        //要保证密码长度符合规定
-        if (userUpdatePasswordDTO.getNewPassword().length() < 6 || userUpdatePasswordDTO.getNewPassword().length() > 16){
-            throw new BaseException(MessageConstant.ERROR_DATABASE);
-        }
-        if (userUpdatePasswordDTO.getOldPassword().length() < 6 || userUpdatePasswordDTO.getOldPassword().length() > 16){
-            throw new BaseException(MessageConstant.ERROR_DATABASE);
-        }
-        if (userUpdatePasswordDTO.getConfirmPassword().length() < 6 || userUpdatePasswordDTO.getConfirmPassword().length() > 16){
-            throw new BaseException(MessageConstant.ERROR_DATABASE);
-        }
-        Long currentId = StpUtil.getLoginIdAsLong();
-        User user = userMapper.selectById(currentId);
-        if (!user.getUserPassword().equals(userUpdatePasswordDTO.getOldPassword())){
-            throw new BaseException(MessageConstant.OLD_PASSWORD_ERROR);
-        }
-        if (!userUpdatePasswordDTO.getNewPassword().equals(userUpdatePasswordDTO.getConfirmPassword())){
-            throw new BaseException(MessageConstant.CONFIRM_PASSWORD_ERROR);
-        }
-        user.setUserPassword(userUpdatePasswordDTO.getNewPassword());
-        updateTimeById(currentId);
-        userMapper.updateById(user);
-    }
 
 
     /**
@@ -121,50 +82,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     }
 
     /**
-     * 分页查询用户
-     * @param userQuery
-     * @return
-     */
-    public PageDTO<UserVO> selectByPage(UserQuery userQuery) {
-        // 1.构建基础查询条件 默认是按创建时间降序排序，如果指定了sortBy和isAsc（必须先指定sortBy,isAsc才生效），则按指定的排序和顺序排序
-        Page<User> page = userQuery.toMpPage("createTime", false);
-        // 2.分页查询
-        Page<User> p = lambdaQuery()
-                .like(userQuery.getUserAccount()!=null,User::getUserAccount,userQuery.getUserAccount())
-                .like(userQuery.getUserName()!=null,User::getUserName,userQuery.getUserName())
-                .eq(userQuery.getUserRole()!=null,User::getUserRole,userQuery.getUserRole())
-                .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getCreateTime,userQuery.getStartTime(),userQuery.getEndTime())
-                .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getUpdateTime,userQuery.getStartTime(),userQuery.getEndTime())
-                .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getEditTime,userQuery.getStartTime(),userQuery.getEndTime())
-                .page(page);
-        // 3.封装VO结果
-        return PageDTO.of(p, UserVO.class);
-    }
-
-    /**
-     * 登录
-     * @param loginAndRegisterDTO 用户登录信息
-     */
-    public User login(LoginAndRegisterDTO loginAndRegisterDTO) {
-        if (StrUtil.isBlank(loginAndRegisterDTO.getUserAccount())||StrUtil.isBlank(loginAndRegisterDTO.getUserPassword())){
-            throw new BaseException(MessageConstant.ERROR_DATABASE);
-        }
-        //根据账号查询数据库的用户信息
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getUserAccount, loginAndRegisterDTO.getUserAccount());
-        User dbUser = userMapper.selectOne(queryWrapper);
-        //若数据库无该账号，抛出异常
-        if (dbUser == null){
-            throw new BaseException(MessageConstant.ACCOUNT_OR_PASSWORD_NOT_FOUND);
-        }
-        //若所输入密码与数据库密码不一致，抛出异常
-        if (!loginAndRegisterDTO.getUserPassword().equals(dbUser.getUserPassword())){
-            throw new BaseException(MessageConstant.ACCOUNT_OR_PASSWORD_NOT_FOUND);
-        }
-        return dbUser;
-    }
-
-    /**
      * 添加用户签到记录
      * @param userId 用户id
      * @return 当前用户是否已签到成功
@@ -184,10 +101,70 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
             bitSet.set(offset, true);
             //设置过期时间为下一年的第一天
 //            bitSet.expire(LocalDate.ofYearDay(date.getYear()+1,1).toEpochDay(), TimeUnit.SECONDS);
-            bitSet.expire(6, TimeUnit.DAYS);
+//            bitSet.expire(6, TimeUnit.DAYS);
         }
         //当天已签到
         return true;
+    }
+
+    /**
+     * 通用更新时间
+     * @param id
+     */
+    public void updateTimeById(Long id) {
+        User user = userMapper.selectById(id);
+        user.setUpdateTime(LocalDateTime.now());
+        userMapper.updateById(user);
+    }
+
+    /**
+     * 修改密码
+     * @param userUpdatePasswordDTO 用户修改密码信息
+     */
+    public void updatePassword(UserUpdatePasswordDTO userUpdatePasswordDTO) {
+        //要保证密码长度符合规定
+        if (userUpdatePasswordDTO.getNewPassword().length() < 6 || userUpdatePasswordDTO.getNewPassword().length() > 16){
+            throw new BaseException(MessageConstant.ERROR_DATABASE);
+        }
+        if (userUpdatePasswordDTO.getOldPassword().length() < 6 || userUpdatePasswordDTO.getOldPassword().length() > 16){
+            throw new BaseException(MessageConstant.ERROR_DATABASE);
+        }
+        if (userUpdatePasswordDTO.getConfirmPassword().length() < 6 || userUpdatePasswordDTO.getConfirmPassword().length() > 16){
+            throw new BaseException(MessageConstant.ERROR_DATABASE);
+        }
+        Long currentId = StpUtil.getLoginIdAsLong();
+        User user = userMapper.selectById(currentId);
+        if (!user.getUserPassword().equals(userUpdatePasswordDTO.getOldPassword())){
+            throw new BaseException(MessageConstant.OLD_PASSWORD_ERROR);
+        }
+        if (!userUpdatePasswordDTO.getNewPassword().equals(userUpdatePasswordDTO.getConfirmPassword())){
+            throw new BaseException(MessageConstant.CONFIRM_PASSWORD_ERROR);
+        }
+        user.setUserPassword(userUpdatePasswordDTO.getNewPassword());
+        updateTimeById(currentId);
+        userMapper.updateById(user);
+    }
+
+
+    /**
+     * 分页查询用户
+     * @param userQuery
+     * @return
+     */
+    public PageDTO<UserVO> selectByPage(UserQuery userQuery) {
+        // 1.构建基础查询条件 默认是按创建时间降序排序，如果指定了sortBy和isAsc（必须先指定sortBy,isAsc才生效），则按指定的排序和顺序排序
+        Page<User> page = userQuery.toMpPage("createTime", false);
+        // 2.分页查询
+        Page<User> p = lambdaQuery()
+                .like(userQuery.getUserAccount()!=null,User::getUserAccount,userQuery.getUserAccount())
+                .like(userQuery.getUserName()!=null,User::getUserName,userQuery.getUserName())
+                .eq(userQuery.getUserRole()!=null,User::getUserRole,userQuery.getUserRole())
+                .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getCreateTime,userQuery.getStartTime(),userQuery.getEndTime())
+                .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getUpdateTime,userQuery.getStartTime(),userQuery.getEndTime())
+                .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getEditTime,userQuery.getStartTime(),userQuery.getEndTime())
+                .page(page);
+        // 3.封装VO结果
+        return PageDTO.of(p, UserVO.class);
     }
 
     /**
@@ -218,5 +195,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         return list;
     }
 
+    /**
+     * 登录
+     * @param loginAndRegisterDTO 用户登录信息
+     */
+    public User login(LoginAndRegisterDTO loginAndRegisterDTO) {
+        if (StrUtil.isBlank(loginAndRegisterDTO.getUserAccount())||StrUtil.isBlank(loginAndRegisterDTO.getUserPassword())){
+            throw new BaseException(MessageConstant.ERROR_DATABASE);
+        }
+        //根据账号查询数据库的用户信息
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUserAccount, loginAndRegisterDTO.getUserAccount());
+        User dbUser = userMapper.selectOne(queryWrapper);
+        //若数据库无该账号，抛出异常
+        if (dbUser == null){
+            throw new BaseException(MessageConstant.ACCOUNT_OR_PASSWORD_NOT_FOUND);
+        }
+        //若所输入密码与数据库密码不一致，抛出异常
+        if (!loginAndRegisterDTO.getUserPassword().equals(dbUser.getUserPassword())){
+            throw new BaseException(MessageConstant.ACCOUNT_OR_PASSWORD_NOT_FOUND);
+        }
+        return dbUser;
+    }
 
 }
