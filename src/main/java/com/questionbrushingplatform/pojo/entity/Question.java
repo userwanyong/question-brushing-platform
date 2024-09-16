@@ -1,78 +1,85 @@
 package com.questionbrushingplatform.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
+import lombok.Data;
 
 /**
- * @author 永
+ * 题目表
+ * @TableName question
  */
+@TableName(value ="question")
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@TableName("question")
 public class Question implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+    /**
+     * id
+     */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
-    @TableField("title")
+    /**
+     * 标题
+     */
     private String title;
 
-    @TableField("content")
+    /**
+     * 内容
+     */
     private String content;
 
-    @TableField("tags")
-    private String tags;
+    /**
+     * 状态 0-待审核 1-通过 2-拒绝
+     */
+    private Integer status;
 
-    @TableField("answer")
+    /**
+     * 推荐答案
+     */
     private String answer;
 
-    @TableField("user_id")
+    /**
+     * 创建用户id
+     */
     private Long userId;
 
-    @TableField("edit_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime editTime;
+    /**
+     * 审核信息
+     */
+    private String reviewMessage;
 
-    @TableField("created_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdTime;
+    /**
+     * 审核人id
+     */
+    private Long reviewerId;
 
-    @TableField("update_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updateTime;
+    /**
+     * 审核时间
+     */
+    private Date reviewTime;
 
-    @TableField("is_delete")
+    /**
+     * 优先级
+     */
+    private Integer priority;
+
+    /**
+     * 创建时间
+     */
+    private Date createdTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
+
+    /**
+     * 是否删除
+     */
     @TableLogic
     private Integer isDelete;
 
-    @TableField("review_status")
-    private Integer reviewStatus;
-
-    @TableField("review_message")
-    private String reviewMessage;
-
-    @TableField("reviewer_id")
-    private Long reviewerId;
-
-    @TableField("review_time")
-    private LocalDateTime reviewTime;
-
-    @TableField("priority")
-    private Integer priority;
-
-    @TableField("question_bank_id")
-    private Integer questionBankId;
-
-
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }
