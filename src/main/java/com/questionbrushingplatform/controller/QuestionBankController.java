@@ -1,5 +1,7 @@
 package com.questionbrushingplatform.controller;
 
+import com.questionbrushingplatform.common.constant.MessageConstant;
+import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.common.result.Result;
 import com.questionbrushingplatform.pojo.dto.PageDTO;
 import com.questionbrushingplatform.pojo.dto.QuestionBankAddDTO;
@@ -85,6 +87,10 @@ public class QuestionBankController {
     public Result update(@RequestBody QuestionBankUpdateDTO questionBankUpdateDTO) {
         //判断是否为管理员
 //        userService.isAdmin();
+        //判断该id是否已存在
+        if (questionBankService.getById(questionBankUpdateDTO.getId())==null) {
+            throw new BaseException(MessageConstant.QUEST_BANK_NOT_FOUND);
+        }
         questionBankService.isExist(questionBankUpdateDTO.getTitle());
         QuestionBank questionBank = new QuestionBank();
         BeanUtils.copyProperties(questionBankUpdateDTO,questionBank);

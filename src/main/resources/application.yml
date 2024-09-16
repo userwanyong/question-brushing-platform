@@ -4,11 +4,14 @@ spring:
   main:
     allow-circular-references: true
 
+
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://118.178.229.137:3306/qbp
-    username: root
-    password: KingYen.2004
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://118.178.229.137:3306/qbp
+      username: root
+      password: KingYen.2004
+
 
   redis:
     database: 1

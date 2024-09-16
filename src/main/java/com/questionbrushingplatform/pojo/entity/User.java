@@ -1,6 +1,7 @@
 package com.questionbrushingplatform.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,37 +26,37 @@ public class User implements Serializable {
     @TableId(value = "id",type = IdType.ASSIGN_ID)
     private Long id;
 
-    @TableField("userAccount")
+    @TableField("user_account")
     private String userAccount;
 
-    @TableField("userPassword")
+    @TableField("user_password")
     private String userPassword;
 
-    @TableField("userName")
+    @TableField("user_name")
     private String userName;
 
-    @TableField("userAvatar")
+    @TableField("user_avatar")
     private String userAvatar;
 
-    @TableField("userProfile")
+    @TableField("user_profile")
     private String userProfile;
 
-    @TableField("userRole")
+    @TableField("user_role")
     private String userRole;
 
-    @TableField("editTime")
+    @TableField("edit_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editTime;
 
-    @TableField("createTime")
+    @TableField("created_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
+    private LocalDateTime createdTime;
 
-    @TableField("updateTime")
+    @TableField("update_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
 
-    @TableField("isDelete")
+    @TableField("is_delete")
     @TableLogic
     private Integer isDelete;
 

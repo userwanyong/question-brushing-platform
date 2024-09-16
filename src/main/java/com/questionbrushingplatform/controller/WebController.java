@@ -55,7 +55,7 @@ public class WebController {
                 .userProfile(user.getUserProfile())
                 .userRole(user.getUserRole())
                 .userPassword(StrUtil.hide(user.getUserPassword(), 1, 3))
-                .createTime(user.getCreateTime())
+                .createdTime(user.getCreatedTime())
                 .editTime(user.getEditTime())
                 .updateTime(user.getUpdateTime())
                 .build();

@@ -37,41 +37,41 @@ public class Question implements Serializable {
     @TableField("answer")
     private String answer;
 
-    @TableField("userId")
+    @TableField("user_id")
     private Long userId;
 
-    @TableField("editTime")
+    @TableField("edit_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editTime;
 
-    @TableField("createTime")
+    @TableField("created_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
+    private LocalDateTime createdTime;
 
-    @TableField("updateTime")
+    @TableField("update_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
 
-    @TableField("isDelete")
+    @TableField("is_delete")
     @TableLogic
     private Integer isDelete;
 
-    @TableField("reviewStatus")
+    @TableField("review_status")
     private Integer reviewStatus;
 
-    @TableField("reviewMessage")
+    @TableField("review_message")
     private String reviewMessage;
 
-    @TableField("reviewerId")
+    @TableField("reviewer_id")
     private Long reviewerId;
 
-    @TableField("reviewTime")
+    @TableField("review_time")
     private LocalDateTime reviewTime;
 
     @TableField("priority")
     private Integer priority;
 
-    @TableField("questionBankId")
+    @TableField("question_bank_id")
     private Integer questionBankId;
 
 

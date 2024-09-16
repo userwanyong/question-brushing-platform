@@ -34,22 +34,22 @@ public class QuestionBank implements Serializable {
     @TableField("picture")
     private String picture;
 
-    @TableField("userId")
+    @TableField("user_id")
     private Long userId;
 
-    @TableField("editTime")
+    @TableField("edit_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editTime;
 
-    @TableField("createTime")
+    @TableField("created_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
+    private LocalDateTime createdTime;
 
-    @TableField("updateTime")
+    @TableField("update_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
 
-    @TableField("isDelete")
+    @TableField("is_delete")
     @TableLogic
     private Integer isDelete;
 

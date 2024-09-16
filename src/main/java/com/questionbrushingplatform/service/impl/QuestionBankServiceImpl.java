@@ -134,12 +134,12 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
      */
     public PageDTO<QuestionBankVO> selectByPage(QuestionBankQuery questionBankQuery) {
         // 1.构建基础查询条件
-        Page<QuestionBank> page = questionBankQuery.toMpPage("createTime", false);
+        Page<QuestionBank> page = questionBankQuery.toMpPage("created_time", false);
         // 2.分页查询
         Page<QuestionBank> p = lambdaQuery()
                 .like(questionBankQuery.getTitle()!=null,QuestionBank::getTitle,questionBankQuery.getTitle())
                 .eq(questionBankQuery.getUserId()!=null,QuestionBank::getUserId,questionBankQuery.getUserId())
-                .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getCreateTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
+                .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getCreatedTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
                 .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getUpdateTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
                 .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getEditTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
                 .page(page);

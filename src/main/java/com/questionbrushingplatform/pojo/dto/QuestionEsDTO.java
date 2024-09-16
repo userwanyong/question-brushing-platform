@@ -42,7 +42,7 @@ public class QuestionEsDTO implements Serializable {
     private Integer questionBankId;
 
     @Field(type= FieldType.Date,format = {},pattern = DATE_TIME_PATTERN)
-    private LocalDateTime createTime;
+    private LocalDateTime createdTime;
 
     @Field(type= FieldType.Date,format = {},pattern = DATE_TIME_PATTERN)
     private LocalDateTime updateTime;

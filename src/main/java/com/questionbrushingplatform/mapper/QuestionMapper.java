@@ -9,6 +9,9 @@ import org.apache.ibatis.annotations.Select;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author 永
+ */
 @Mapper
 public interface QuestionMapper extends BaseMapper<Question> {
     /**
@@ -16,7 +19,7 @@ public interface QuestionMapper extends BaseMapper<Question> {
      * @param minUpdateTime
      * @return
      */
-    @Select("select * from question where updateTime >= #{minUpdateTime}")
+    @Select("select * from question where update_time >= #{minUpdateTime}")
     List<Question> listQuestionWithDelete(Date minUpdateTime);
 
 }
