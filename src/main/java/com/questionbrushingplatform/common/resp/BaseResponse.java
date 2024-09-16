@@ -35,7 +35,7 @@ public class BaseResponse<T> implements Serializable {
         this.message = code.getMessage();
     }
 
-    public BaseResponse(ResponseCode code,T data) {
+    public BaseResponse(ResponseCode code, T data) {
         this.code = code.getCode();
         this.message = code.getMessage();
         this.data = data;
