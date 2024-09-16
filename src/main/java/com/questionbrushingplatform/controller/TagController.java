@@ -1,16 +1,23 @@
 package com.questionbrushingplatform.controller;
 
-import com.questionbrushingplatform.common.result.Result;
+import com.questionbrushingplatform.common.resp.BaseResponse;
+import com.questionbrushingplatform.common.resp.ResponseCode;
 import com.questionbrushingplatform.pojo.entity.Tag;
 import com.questionbrushingplatform.service.TagService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 题目标签模块
+ * @author wenruohan
+ */
 @RestController
 @RequestMapping("/tag")
 @RequiredArgsConstructor
+@Api(tags = "标签模块")
 public class TagController {
 
     private final TagService tagService;
@@ -21,13 +28,16 @@ public class TagController {
      * @return Result<Boolean>
      */
     @PostMapping("/add")
-    public Result<Boolean> add(String name) {
+    public BaseResponse<Boolean> add(String name) {
         if (tagService.getTagByName(name) != null) {
-            return Result.error("标签已存在");
+            return new BaseResponse<>(ResponseCode.PARAMETER_ERROR);
         }
         Tag tag = new Tag();
         tag.setName(name);
-        return Result.success(tagService.addTag(tag));
+        if (!tagService.addTag(tag)) {
+            return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
+        }
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     /**
@@ -36,24 +46,28 @@ public class TagController {
      * @return Result<Boolean>
      */
     @PostMapping("/delete")
-    public Result<Boolean> delete(Integer id) {
-        return Result.success(tagService.deleteTag(id));
+    public BaseResponse<Boolean> delete(Integer id) {
+        if (tagService.deleteTag(id)) {
+            return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
+        }
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     /**
      * 更新标签
-     * @param id 标签ID
-     * @param name 标签名称
+     * @param tag 标签
      * @return Result<Boolean>
      */
     @PostMapping("/update")
-    public Result<Boolean> update(Integer id, String name) {
-        Tag tag = tagService.getTagById(id);
-        if (tag == null) {
-            return Result.error("标签不存在");
+    public BaseResponse<Tag> update(@RequestBody Tag tag) {
+        Tag res = tagService.getTagById(tag.getId());
+        if (res == null) {
+            return new BaseResponse<Tag>(ResponseCode.NO_DATA, tag);
         }
-        tag.setName(name);
-        return Result.success(tagService.updateTag(tag));
+        if (!tagService.updateTag(tag)) {
+            return new BaseResponse<Tag>(ResponseCode.SYSTEM_ERROR, tag);
+        }
+        return new BaseResponse<Tag>(ResponseCode.SUCCESS, tag);
     }
 
     /**
@@ -62,8 +76,12 @@ public class TagController {
      * @return Result<Tag>
      */
     @GetMapping("/get")
-    public Result<Tag> get(@RequestParam Integer id) {
-        return Result.success(tagService.getTagById(id));
+    public BaseResponse<Tag> get(@RequestParam Integer id) {
+        Tag tag = tagService.getTagById(id);
+        if (tag == null) {
+            return new BaseResponse<>(ResponseCode.NO_DATA);
+        }
+        return new BaseResponse<>(ResponseCode.SUCCESS, tag);
     }
 
     /**
@@ -71,10 +89,10 @@ public class TagController {
      * @return Result<List<Tag>>
      */
     @GetMapping("/list")
-    public Result<List<Tag>> list(@RequestParam String name) {
+    public BaseResponse<List<Tag>> list(@RequestParam String name) {
         if (name.isEmpty()) {
-            return Result.success(tagService.listTags());
+            return new BaseResponse<>(ResponseCode.SUCCESS, tagService.listTags());
         }
-        return Result.success(tagService.listTagsByName(name));
+        return new BaseResponse<>(ResponseCode.SUCCESS, tagService.listTagsByName(name));
     }
 }
