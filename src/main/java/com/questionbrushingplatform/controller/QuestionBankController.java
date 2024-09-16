@@ -2,7 +2,8 @@ package com.questionbrushingplatform.controller;
 
 import com.questionbrushingplatform.common.constant.MessageConstant;
 import com.questionbrushingplatform.common.exception.BaseException;
-import com.questionbrushingplatform.common.result.Result;
+import com.questionbrushingplatform.common.resp.BaseResponse;
+import com.questionbrushingplatform.common.resp.ResponseCode;
 import com.questionbrushingplatform.pojo.dto.PageDTO;
 import com.questionbrushingplatform.pojo.dto.QuestionBankAddDTO;
 import com.questionbrushingplatform.pojo.dto.QuestionBankUpdateDTO;
@@ -41,11 +42,11 @@ public class QuestionBankController {
      */
     @PostMapping("/add")
     @ApiOperation("新增题库")
-    public Result add(@RequestBody QuestionBankAddDTO questionBankAddDTO) {
+    public BaseResponse<Boolean> add(@RequestBody QuestionBankAddDTO questionBankAddDTO) {
         //判断是否为管理员
 //        userService.isAdmin();
         questionBankService.add(questionBankAddDTO);
-        return Result.success("新增成功");
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     /**
@@ -55,11 +56,11 @@ public class QuestionBankController {
      */
     @PostMapping("/deleteById/{id}")
     @ApiOperation("根据id删除题库")
-    public Result deleteById(@PathVariable Long id) {
+    public BaseResponse<Boolean> deleteById(@PathVariable Long id) {
         //判断是否为管理员
 //        userService.isAdmin();
         questionBankService.deleteById(id);
-        return Result.success("删除成功");
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
 
@@ -70,11 +71,11 @@ public class QuestionBankController {
      */
     @PostMapping("/deleteByIds")
     @ApiOperation("批量删除题库")
-    public Result deleteByIds(@RequestBody Long[] ids) {
+    public BaseResponse<Boolean> deleteByIds(@RequestBody Long[] ids) {
         //判断是否为管理员
 //        userService.isAdmin();
         questionBankService.deleteByIds(ids);
-        return Result.success("删除成功");
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     /**
@@ -84,7 +85,7 @@ public class QuestionBankController {
      */
     @PostMapping("/update")
     @ApiOperation("修改题库")
-    public Result update(@RequestBody QuestionBankUpdateDTO questionBankUpdateDTO) {
+    public BaseResponse<QuestionBankUpdateDTO> update(@RequestBody QuestionBankUpdateDTO questionBankUpdateDTO) {
         //判断是否为管理员
 //        userService.isAdmin();
         //判断该id是否已存在
@@ -96,7 +97,7 @@ public class QuestionBankController {
         BeanUtils.copyProperties(questionBankUpdateDTO,questionBank);
         questionBank.setUpdateTime(LocalDateTime.now());
         questionBankService.updateById(questionBank);
-        return Result.success("修改成功");
+        return new BaseResponse<>(ResponseCode.SUCCESS, questionBankUpdateDTO);
     }
 
     /**
@@ -106,10 +107,15 @@ public class QuestionBankController {
      */
     @GetMapping("/getById/{id}")
     @ApiOperation("根据id查询题库")
-    public Result getById(@PathVariable Long id) {
+    public BaseResponse<QuestionBank> getById(@PathVariable Long id) {
         //判断是否为管理员
 //        userService.isAdmin();
-        return Result.success(questionBankService.getById(id));
+        //判断该id是否存在
+        if (questionBankService.getById(id)==null) {
+            throw new BaseException(MessageConstant.QUEST_BANK_NOT_FOUND);
+        }
+        QuestionBank res = questionBankService.getById(id);
+        return new BaseResponse<>(ResponseCode.SUCCESS, res);
     }
 
     /**

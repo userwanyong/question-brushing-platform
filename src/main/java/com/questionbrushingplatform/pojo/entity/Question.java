@@ -31,8 +31,8 @@ public class Question implements Serializable {
     @TableField("content")
     private String content;
 
-    @TableField("tags")
-    private String tags;
+//    @TableField("tags")
+//    private String tags;
 
     @TableField("answer")
     private String answer;
@@ -40,9 +40,9 @@ public class Question implements Serializable {
     @TableField("user_id")
     private Long userId;
 
-    @TableField("edit_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime editTime;
+//    @TableField("edit_time")
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    private LocalDateTime editTime;
 
     @TableField("created_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -56,8 +56,8 @@ public class Question implements Serializable {
     @TableLogic
     private Integer isDelete;
 
-    @TableField("review_status")
-    private Integer reviewStatus;
+    @TableField("status")
+    private Integer status;
 
     @TableField("review_message")
     private String reviewMessage;
@@ -71,8 +71,8 @@ public class Question implements Serializable {
     @TableField("priority")
     private Integer priority;
 
-    @TableField("question_bank_id")
-    private Integer questionBankId;
+//    @TableField("question_bank_id")
+//    private Integer questionBankId;
 
 
 }

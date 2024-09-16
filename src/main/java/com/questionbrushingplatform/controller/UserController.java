@@ -1,8 +1,8 @@
 package com.questionbrushingplatform.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.questionbrushingplatform.common.constant.MessageConstant;
-import com.questionbrushingplatform.common.result.Result;
+import com.questionbrushingplatform.common.resp.BaseResponse;
+import com.questionbrushingplatform.common.resp.ResponseCode;
 import com.questionbrushingplatform.pojo.dto.PageDTO;
 import com.questionbrushingplatform.pojo.dto.UserAddDTO;
 import com.questionbrushingplatform.pojo.dto.UserDTO;
@@ -42,9 +42,9 @@ public class UserController {
      */
     @PostMapping("/add")
     @ApiOperation("新增用户")
-    public Result add(@RequestBody UserAddDTO userAddDTO) {
+    public BaseResponse<Boolean> add(@RequestBody UserAddDTO userAddDTO) {
         userService.add(userAddDTO);
-        return Result.success("新增成功");
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     /**
@@ -54,16 +54,16 @@ public class UserController {
      */
     @DeleteMapping("/deleteById/{id}")
     @ApiOperation("单个删除用户")
-    public Result deleteById(@PathVariable Long id) {
+    public BaseResponse<Boolean> deleteById(@PathVariable Long id) {
         //判断是否为管理员
 //        userService.isAdmin();
         //不能重复删除
         if (userService.getById(id) == null) {
-            return Result.error(MessageConstant.USER_NOT_FOUND);
+            return new BaseResponse<>(ResponseCode.NO_DATA);
         }
         userService.updateTimeById(id);
         userService.removeById(id);
-        return Result.success("删除成功");
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     /**
@@ -73,18 +73,18 @@ public class UserController {
      */
     @DeleteMapping("/deleteByIds")
     @ApiOperation("批量删除用户")
-    public Result deleteByIds(@RequestBody List<Long> ids) {
+    public BaseResponse<Boolean> deleteByIds(@RequestBody List<Long> ids) {
         //判断是否为管理员
 //        userService.isAdmin();
         for (Long id : ids) {
             //不能重复删除
             if (userService.getById(id) == null) {
-                return Result.error(MessageConstant.USER_NOT_FOUND);
+                return new BaseResponse<>(ResponseCode.NO_DATA);
             }
             userService.updateTimeById(id);
         }
         userService.removeByIds(ids);
-        return Result.success("删除成功");
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     /**
@@ -94,14 +94,14 @@ public class UserController {
      */
     @PutMapping("/update")
     @ApiOperation("修改用户信息")
-    public Result update(@RequestBody UserDTO userDTO) {
+    public BaseResponse<UserDTO> update(@RequestBody UserDTO userDTO) {
         //判断是否为管理员
 //        userService.isAdmin();
         User user = new User();
         BeanUtils.copyProperties(userDTO,user);
         user.setUpdateTime(LocalDateTime.now());
         userService.updateById(user);
-        return Result.success("修改成功");
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     /**
@@ -111,13 +111,13 @@ public class UserController {
      */
     @PutMapping("/updateCurrentInfo")
     @ApiOperation("修改当前用户信息")
-    public Result updateCurrentInfo(@RequestBody UserDTO userDTO) {
+    public BaseResponse<UserDTO> updateCurrentInfo(@RequestBody UserDTO userDTO) {
         User user = new User();
         BeanUtils.copyProperties(userDTO,user);
         user.setId(StpUtil.getLoginIdAsLong());
         user.setUpdateTime(LocalDateTime.now());
         userService.updateById(user);
-        return Result.success("修改成功");
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     /**
@@ -127,9 +127,9 @@ public class UserController {
      */
     @PutMapping("/updatePassword")
     @ApiOperation("修改当前登录用户密码")
-    public Result updatePassword(@RequestBody UserUpdatePasswordDTO userUpdatePasswordDTO) {
+    public BaseResponse<UserUpdatePasswordDTO> updatePassword(@RequestBody UserUpdatePasswordDTO userUpdatePasswordDTO) {
         userService.updatePassword(userUpdatePasswordDTO);
-        return Result.success("修改成功");
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     /**
@@ -139,14 +139,14 @@ public class UserController {
      */
     @GetMapping("/getById/{id}")
     @ApiOperation("根据id查询用户")
-    public Result getById(@PathVariable Long id) {
+    public BaseResponse<User> getById(@PathVariable Long id) {
         //判断是否为管理员
 //        userService.isAdmin();
         User user = userService.getById(id);
         if (user == null) {
-            return Result.error(MessageConstant.USER_NOT_FOUND);
+            return new BaseResponse<>(ResponseCode.NO_DATA);
         }
-        return Result.success(user);
+        return new BaseResponse<>(ResponseCode.SUCCESS,user);
     }
 
     /**
@@ -155,12 +155,12 @@ public class UserController {
      */
     @GetMapping("/getCurrentUser")
     @ApiOperation("获取当前用户信息")
-    public Result getCurrentUser() {
+    public BaseResponse<User> getCurrentUser() {
         User user = userService.getById((Serializable) StpUtil.getLoginId());
         if (user == null) {
-            return Result.error(MessageConstant.USER_NOT_FOUND);
+            return new BaseResponse<>(ResponseCode.NO_DATA);
         }
-        return Result.success(user);
+        return new BaseResponse<>(ResponseCode.SUCCESS,user);
     }
 
 
@@ -185,13 +185,13 @@ public class UserController {
      */
     @PostMapping("/addSignIn")
     @ApiOperation("添加用户签到记录")
-    public Result<Boolean> addSignIn() {
+    public BaseResponse<Boolean> addSignIn() {
         //必须登录才能签到
         if (!StpUtil.isLogin()) {
-            return Result.error(MessageConstant.USER_NOT_LOGIN_OR_EXPIRED);
+            return new BaseResponse<>(ResponseCode.NO_LOGIN);
         }
         boolean result = userService.addUserSignIn(StpUtil.getLoginIdAsLong());
-        return Result.success(result);
+        return new BaseResponse<>(result ? ResponseCode.SUCCESS : ResponseCode.SYSTEM_ERROR);
     }
 
     /**
@@ -201,13 +201,13 @@ public class UserController {
      */
     @GetMapping("/getSignInRecord")
     @ApiOperation("获取用户签到记录")
-    public Result<List<Integer>> getSignInRecord(Integer year) {
+    public BaseResponse<List<Integer>> getSignInRecord(Integer year) {
         //必须登录
         if (!StpUtil.isLogin()) {
-            return Result.error(MessageConstant.USER_NOT_LOGIN_OR_EXPIRED);
+            return new BaseResponse<>(ResponseCode.NO_LOGIN);
         }
         List<Integer> userSignInRecord = userService.getUserSignInRecord(StpUtil.getLoginIdAsLong(), year);
-        return Result.success(userSignInRecord);
+        return new BaseResponse<>(ResponseCode.SUCCESS, userSignInRecord);
     }
 
 }

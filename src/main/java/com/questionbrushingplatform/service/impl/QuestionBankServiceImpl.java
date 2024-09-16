@@ -85,12 +85,13 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         }
         //判断该题库下有没有题目，如果有的话，不能删除该题库，要先删除其中的题目
         //查询该题库下是否有题目 select * from question where questionBankId = id
-        LambdaQueryWrapper<Question> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Question::getQuestionBankId, id);
-        Long count = questionMapper.selectCount(queryWrapper);
-        if (count > 0){
-            throw new BaseException(MessageConstant.QUESTION_BANK_NOT_EMPTY);
-        }
+        //TODO
+//        LambdaQueryWrapper<Question> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(Question::getQuestionBankId, id);
+//        Long count = questionMapper.selectCount(queryWrapper);
+//        if (count > 0){
+//            throw new BaseException(MessageConstant.QUESTION_BANK_NOT_EMPTY);
+//        }
         //更新时间
         updateTimeById(id);
         questionBankMapper.deleteById(id);
@@ -111,12 +112,13 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             throw new BaseException(MessageConstant.QUEST_BANK_NOT_FOUND);
         }
         //判断该题库下有没有题目，如果有的话，不能删除该题库，要先删除其中的题目
-        LambdaQueryWrapper<Question> queryWrapperQuestion = new LambdaQueryWrapper<>();
-        queryWrapperQuestion.in(Question::getQuestionBankId, ids);
-        Long countQuestion = questionMapper.selectCount(queryWrapperQuestion);
-        if (countQuestion > 0){
-            throw new BaseException(MessageConstant.QUESTION_BANK_NOT_EMPTY);
-        }
+        //TODO
+//        LambdaQueryWrapper<Question> queryWrapperQuestion = new LambdaQueryWrapper<>();
+//        queryWrapperQuestion.in(Question::getQuestionBankId, ids);
+//        Long countQuestion = questionMapper.selectCount(queryWrapperQuestion);
+//        if (countQuestion > 0){
+//            throw new BaseException(MessageConstant.QUESTION_BANK_NOT_EMPTY);
+//        }
         //更新时间
         LambdaUpdateWrapper<QuestionBank> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.set(QuestionBank::getUpdateTime, LocalDateTime.now())

@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,7 +48,7 @@ public class TagController {
      */
     @PostMapping("/delete")
     public BaseResponse<Boolean> delete(Integer id) {
-        if (tagService.deleteTag(id)) {
+        if (!tagService.deleteTag(id)) {
             return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
         }
         return new BaseResponse<>(ResponseCode.SUCCESS);
@@ -64,7 +65,8 @@ public class TagController {
         if (res == null) {
             return new BaseResponse<Tag>(ResponseCode.NO_DATA, tag);
         }
-        if (!tagService.updateTag(tag)) {
+        res.setUpdatedTime(new Date());
+        if (!tagService.updateTag(res)) {
             return new BaseResponse<Tag>(ResponseCode.SYSTEM_ERROR, tag);
         }
         return new BaseResponse<Tag>(ResponseCode.SUCCESS, tag);

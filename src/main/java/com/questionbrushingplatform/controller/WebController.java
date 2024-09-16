@@ -4,7 +4,8 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
 import com.questionbrushingplatform.common.constant.MessageConstant;
 import com.questionbrushingplatform.common.exception.BaseException;
-import com.questionbrushingplatform.common.result.Result;
+import com.questionbrushingplatform.common.resp.BaseResponse;
+import com.questionbrushingplatform.common.resp.ResponseCode;
 import com.questionbrushingplatform.pojo.dto.LoginAndRegisterDTO;
 import com.questionbrushingplatform.pojo.dto.UserAddDTO;
 import com.questionbrushingplatform.pojo.entity.User;
@@ -42,7 +43,7 @@ public class WebController {
      */
     @PostMapping("/login")
     @ApiOperation(value = "登录")
-    public Result<LoginVO> login(@RequestBody LoginAndRegisterDTO loginAndRegisterDTO) {
+    public BaseResponse<LoginVO> login(@RequestBody LoginAndRegisterDTO loginAndRegisterDTO) {
 
         User user=userService.login(loginAndRegisterDTO);
         StpUtil.login(user.getId());
@@ -60,7 +61,7 @@ public class WebController {
                 .updateTime(user.getUpdateTime())
                 .build();
 
-        return Result.success(loginVO);
+        return new BaseResponse<>(ResponseCode.SUCCESS,loginVO);
     }
 
 
@@ -71,7 +72,7 @@ public class WebController {
      */
     @PostMapping("/register")
     @ApiOperation(value = "注册")
-    public Result<String> register(@RequestBody LoginAndRegisterDTO loginAndRegisterDTO) {
+    public BaseResponse<String> register(@RequestBody LoginAndRegisterDTO loginAndRegisterDTO) {
         //检查一下是否填写了账号和密码
         if (StrUtil.isBlank(loginAndRegisterDTO.getUserAccount())||StrUtil.isBlank(loginAndRegisterDTO.getUserPassword())){
             throw new BaseException(MessageConstant.ERROR_ACCOUNT_AND_PASSWORD);
@@ -79,7 +80,7 @@ public class WebController {
         UserAddDTO userAddDTO = new UserAddDTO();
         BeanUtils.copyProperties(loginAndRegisterDTO, userAddDTO);
         userService.add(userAddDTO);
-        return Result.success(MessageConstant.USER_REGISTER_SUCCESS);
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     /**
@@ -88,13 +89,10 @@ public class WebController {
      */
     @PostMapping("/logout")
     @ApiOperation(value = "退出登录")
-    public Result<String> logout() {
+    public BaseResponse<String> logout() {
         StpUtil.logout();
-        return Result.success(MessageConstant.USER_LOGOUT_SUCCESS);
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
-
-
-
 
 
 }

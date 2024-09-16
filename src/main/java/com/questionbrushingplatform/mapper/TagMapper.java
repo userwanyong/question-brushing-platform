@@ -2,6 +2,7 @@ package com.questionbrushingplatform.mapper;
 
 import com.questionbrushingplatform.pojo.entity.Tag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
 * @author wenruohan
@@ -9,6 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @createDate 2024-09-16 16:47:24
 * @Entity com.questionbrushingplatform.pojo.entity.Tag
 */
+@Mapper
 public interface TagMapper extends BaseMapper<Tag> {
 
 }

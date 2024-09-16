@@ -1,8 +1,8 @@
 package com.questionbrushingplatform.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.questionbrushingplatform.common.constant.MessageConstant;
-import com.questionbrushingplatform.common.result.Result;
+import com.questionbrushingplatform.common.resp.BaseResponse;
+import com.questionbrushingplatform.common.resp.ResponseCode;
 import com.questionbrushingplatform.pojo.dto.PageDTO;
 import com.questionbrushingplatform.pojo.entity.Question;
 import com.questionbrushingplatform.pojo.query.QuestionQuery;
@@ -34,12 +34,12 @@ public class QuestionController {
      */
     @GetMapping("/getById/{id}")
     @ApiOperation("根据id查询题目")
-    public Result getById(@PathVariable Long id) {
+    public BaseResponse<Question> getById(@PathVariable Long id) {
         Question question = questionService.getById(id);
         if (question == null) {
-            return Result.error(MessageConstant.QUESTION_NOT_FOUND);
+            return new BaseResponse<>(ResponseCode.NO_DATA);
         }
-        return Result.success(question);
+        return new BaseResponse<>(ResponseCode.SUCCESS, question);
     }
 
     /**
