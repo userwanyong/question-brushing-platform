@@ -1,16 +1,15 @@
 package com.questionbrushingplatform.controller;
 
-
 import com.questionbrushingplatform.common.constant.MessageConstant;
 import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
-import com.questionbrushingplatform.dto.request.PageDTO;
-import com.questionbrushingplatform.dto.request.QuestionBankAddRequestDTO;
-import com.questionbrushingplatform.dto.request.QuestionBankUpdateRequestDTO;
-import com.questionbrushingplatform.dto.response.QuestionBankResponseDTO;
+import com.questionbrushingplatform.pojo.dto.PageDTO;
+import com.questionbrushingplatform.pojo.dto.QuestionBankAddDTO;
+import com.questionbrushingplatform.pojo.dto.QuestionBankUpdateDTO;
 import com.questionbrushingplatform.entity.QuestionBank;
 import com.questionbrushingplatform.pojo.query.QuestionBankQuery;
+import com.questionbrushingplatform.pojo.vo.QuestionBankVO;
 import com.questionbrushingplatform.service.QuestionBankService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,7 +40,7 @@ public class QuestionBankController {
      */
     @PostMapping("/add")
     @ApiOperation("新增题库")
-    public BaseResponse<Boolean> add(@RequestBody QuestionBankAddRequestDTO questionBankAddDTO) {
+    public BaseResponse<Boolean> add(@RequestBody QuestionBankAddDTO questionBankAddDTO) {
         //判断是否为管理员
 //        userService.isAdmin();
         questionBankService.add(questionBankAddDTO);
@@ -84,7 +83,7 @@ public class QuestionBankController {
      */
     @PostMapping("/update")
     @ApiOperation("修改题库")
-    public BaseResponse<QuestionBankUpdateRequestDTO> update(@RequestBody QuestionBankUpdateRequestDTO questionBankUpdateDTO) {
+    public BaseResponse<QuestionBankUpdateDTO> update(@RequestBody QuestionBankUpdateDTO questionBankUpdateDTO) {
         //判断是否为管理员
 //        userService.isAdmin();
         //判断该id是否已存在
@@ -126,10 +125,10 @@ public class QuestionBankController {
      */
     @GetMapping("/selectByPage")
     @ApiOperation("分页查询题库")
-    public PageDTO<QuestionBankResponseDTO> selectByPage(QuestionBankQuery questionBankQuery) {
+    public PageDTO<QuestionBankVO> selectByPage(QuestionBankQuery questionBankQuery) {
         //判断是否为管理员
 //        userService.isAdmin();
-        PageDTO<QuestionBankResponseDTO> page=questionBankService.selectByPage(questionBankQuery);
+        PageDTO<QuestionBankVO> page=questionBankService.selectByPage(questionBankQuery);
         return page;
     }
 

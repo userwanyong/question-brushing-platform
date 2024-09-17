@@ -1,11 +1,11 @@
 package com.questionbrushingplatform.dto.response;
 
-import com.questionbrushingplatform.entity.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class QuestionResponseDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String id;
@@ -31,6 +32,6 @@ public class QuestionResponseDTO implements Serializable {
 
     private String userId;
 
-    private List<Tag> tags;
+    private List<TagResponseDTO> tags;
 
 }

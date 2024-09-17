@@ -8,7 +8,7 @@
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="questionId" column="question_id" jdbcType="BIGINT"/>
             <result property="bankId" column="bank_id" jdbcType="BIGINT"/>
-            <result property="createdTime" column="created_tiam" jdbcType="TIMESTAMP"/>
+            <result property="createdTiam" column="created_tiam" jdbcType="TIMESTAMP"/>
             <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
             <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
     </resultMap>
