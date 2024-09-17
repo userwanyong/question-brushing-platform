@@ -1,5 +1,6 @@
 package com.questionbrushingplatform.dto.response;
 
+import com.questionbrushingplatform.entity.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,6 +33,6 @@ public class QuestionResponseDTO implements Serializable {
 
     private String userId;
 
-    private List<TagResponseDTO> tags;
+    private List<Tag> tags;
 
 }
