@@ -20,4 +20,5 @@ public interface QuestionService extends IService<Question> {
     Question getQuestionByTitle(String title);
     Page<Question> listQuestions(Integer pageNum, Integer pageSize);
     List<Question> listQuestions();
+    List<Question> listQuestionsByIds(List<Long> ids);
 }

@@ -37,7 +37,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         registry.addInterceptor(new SaInterceptor(handler -> {
 
                     // 角色校验 -- 拦截以 questionBank 开头的路由，必须是 admin 角色才可以通过认证
-                    SaRouter.match("/questionBank/**", r -> StpUtil.checkRole("admin"));
+                    SaRouter.match("/bank/**", r -> StpUtil.checkRole("admin"));
 
                     SaRouter.match("/user/add", r -> StpUtil.checkRole("admin"));
                     SaRouter.match("/user/deleteById/{id}", r -> StpUtil.checkRole("admin"));

@@ -43,8 +43,8 @@ public class QuestionTagsMappingServiceImpl extends ServiceImpl<QuestionTagsMapp
     }
 
     @Override
-    public void updateQuestionTagsMapping(QuestionTagsMapping questionTagsMapping) {
-        boolean res = updateById(questionTagsMapping);
+    public void updateQuestionTagsMapping(List<QuestionTagsMapping> questionTagsMappings) {
+        boolean res = saveOrUpdateBatch(questionTagsMappings);
         if (!res) {
             throw new RuntimeException("更新失败");
         }

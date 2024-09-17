@@ -1,9 +1,9 @@
 server:
   port: 8090
+
 spring:
   main:
     allow-circular-references: true
-
 
   datasource:
     druid:
@@ -25,14 +25,14 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml #指定mapper.xml文件位置
-  type-aliases-package: com.questionbrushingplatform.pojo.entity #别名扫描包
+  type-aliases-package: com.questionbrushingplatform.entity #别名扫描包
   configuration:
     map-underscore-to-camel-case: true #开启驼峰命名
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启日志
   global-config:
     db-config:
       id-type: ASSIGN_ID #主键策略
-      update-strategy: not_null #更新策略，只更新非空字段
+      update-strategy: default #更新策略，只更新非空字段
       logic-delete-field: isDelete #全局逻辑删除的实体字段名
       logic-delete-value: 1 #逻辑已删除值
       logic-not-delete-value: 0 #逻辑未删除值

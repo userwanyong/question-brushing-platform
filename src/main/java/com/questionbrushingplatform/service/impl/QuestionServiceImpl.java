@@ -65,12 +65,21 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
 
     @Override
     public Page<Question> listQuestions(Integer pageNum, Integer pageSize) {
-        return page(new Page<>(pageNum, pageSize));
+        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("status", 1);
+        return page(new Page<>(pageNum, pageSize), queryWrapper);
     }
 
     @Override
     public List<Question> listQuestions() {
         return list();
+    }
+
+    @Override
+    public List<Question> listQuestionsByIds(List<Long> ids) {
+        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", ids);
+        return list(queryWrapper);
     }
 
 }

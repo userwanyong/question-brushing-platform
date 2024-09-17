@@ -47,24 +47,6 @@ public class Question implements Serializable {
     private Long userId;
 
     /**
-     * 审核信息
-     */
-    @JsonProperty("review_message")
-    private String reviewMessage;
-
-    /**
-     * 审核人id
-     */
-    @JsonProperty("reviewer_id")
-    private Long reviewerId;
-
-    /**
-     * 审核时间
-     */
-    @JsonProperty("review_time")
-    private Date reviewTime;
-
-    /**
      * 优先级
      */
     private Integer priority;

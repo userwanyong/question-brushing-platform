@@ -8,6 +8,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @Data
 public class QuestionEsRequestDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static final String DATE_TIME_PATTERN="yyyy-MM-dd HH:mm:ss";

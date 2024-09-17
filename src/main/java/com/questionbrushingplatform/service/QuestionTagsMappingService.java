@@ -14,7 +14,7 @@ public interface QuestionTagsMappingService extends IService<QuestionTagsMapping
     void addQuestionTagsMapping(QuestionTagsMapping questionTagsMapping);
     void addQuestionTagsMappings(List<QuestionTagsMapping> questionTagsMappings);
     void deleteQuestionTagsMapping(Integer id);
-    void updateQuestionTagsMapping(QuestionTagsMapping questionTagsMapping);
+    void updateQuestionTagsMapping(List<QuestionTagsMapping> questionTagsMappings);
     QuestionTagsMapping getQuestionTagsMappingById(Integer id);
     List<QuestionTagsMapping> listQuestionTagsMappings();
     List<QuestionTagsMapping> listQuestionTagsMappingsByQuestionId(Long questionId);

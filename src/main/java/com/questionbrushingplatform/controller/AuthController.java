@@ -29,10 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @author 永
  */
 @RestController
-@RequestMapping("/web")
+@RequestMapping("/auth")
 @Slf4j
-@Api(tags = "登录注册接口")
-public class WebController {
+@Api(tags = "授权模块")
+public class AuthController {
 
     @Autowired
     private UserService userService;
