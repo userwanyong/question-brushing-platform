@@ -1,15 +1,13 @@
 package com.questionbrushingplatform.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.questionbrushingplatform.dto.request.LoginAndRegisterRequestDTO;
-import com.questionbrushingplatform.dto.request.PageDTO;
-import com.questionbrushingplatform.dto.request.UserAddRequestDTO;
-
-import com.questionbrushingplatform.dto.request.UserUpdatePasswordRequestDTO;
-import com.questionbrushingplatform.dto.response.UserResponseDTO;
+import com.questionbrushingplatform.pojo.dto.LoginAndRegisterDTO;
+import com.questionbrushingplatform.pojo.dto.PageDTO;
+import com.questionbrushingplatform.pojo.dto.UserAddDTO;
+import com.questionbrushingplatform.pojo.dto.UserUpdatePasswordDTO;
 import com.questionbrushingplatform.entity.User;
 import com.questionbrushingplatform.pojo.query.UserQuery;
-
+import com.questionbrushingplatform.pojo.vo.UserVO;
 
 import java.util.List;
 
@@ -22,13 +20,13 @@ public interface UserService extends IService<User> {
      * 新增用户
      * @param userAddDTO
      */
-    void add(UserAddRequestDTO userAddDTO);
+    void add(UserAddDTO userAddDTO);
 
     /**
      * 修改密码
      * @param userUpdatePasswordDTO
      */
-    void updatePassword(UserUpdatePasswordRequestDTO userUpdatePasswordDTO);
+    void updatePassword(UserUpdatePasswordDTO userUpdatePasswordDTO);
 
     /**
      * 通用更新时间
@@ -41,13 +39,13 @@ public interface UserService extends IService<User> {
      * @param userQuery
      * @return
      */
-    PageDTO<UserResponseDTO> selectByPage(UserQuery userQuery);
+    PageDTO<UserVO> selectByPage(UserQuery userQuery);
 
     /**
      * 登录
      * @param loginAndRegisterDTO
      */
-    User login(LoginAndRegisterRequestDTO loginAndRegisterDTO);
+    User login(LoginAndRegisterDTO loginAndRegisterDTO);
 
 //    /**
 //     * 判断是否为管理员

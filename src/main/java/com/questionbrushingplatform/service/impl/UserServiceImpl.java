@@ -4,20 +4,19 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
-import com.questionbrushingplatform.dto.request.PageDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.questionbrushingplatform.common.constant.MessageConstant;
 import com.questionbrushingplatform.common.constant.PasswordConstant;
 import com.questionbrushingplatform.common.constant.RedisConstant;
 import com.questionbrushingplatform.common.exception.BaseException;
-import com.questionbrushingplatform.dto.request.LoginAndRegisterRequestDTO;
-import com.questionbrushingplatform.dto.request.UserAddRequestDTO;
-import com.questionbrushingplatform.dto.request.UserUpdatePasswordRequestDTO;
-import com.questionbrushingplatform.dto.response.UserResponseDTO;
-import com.questionbrushingplatform.entity.User;
 import com.questionbrushingplatform.mapper.UserMapper;
+import com.questionbrushingplatform.pojo.dto.LoginAndRegisterDTO;
+import com.questionbrushingplatform.pojo.dto.PageDTO;
+import com.questionbrushingplatform.pojo.dto.UserAddDTO;
+import com.questionbrushingplatform.pojo.dto.UserUpdatePasswordDTO;
+import com.questionbrushingplatform.entity.User;
 import com.questionbrushingplatform.pojo.query.UserQuery;
+import com.questionbrushingplatform.pojo.vo.UserVO;
 import com.questionbrushingplatform.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBitSet;
@@ -25,6 +24,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements UserService {
 
     @Autowired
     private RedissonClient redissonClient;
@@ -49,18 +49,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * 新增用户
      * @param userAddDTO 用户新增信息
      */
-    public void add(UserAddRequestDTO userAddDTO) {
+    public void add(UserAddDTO userAddDTO) {
         //限制账号长度为11位
-        if (userAddDTO.getUsername().length() != 11){
-            log.error("UserServiceImpl.add error: the username length not allowed which is {}", userAddDTO.getUsername());
+        if (userAddDTO.getUserAccount().length() != 11){
+            log.error("UserServiceImpl.add error: the userAccount length not allowed which is {}", userAddDTO.getUserAccount());
             throw new BaseException(MessageConstant.ACCOUNT_NOT_ALLOWED);
         }
         //先判断数据库是否有该账号，如果有，则不新增
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getUsername, userAddDTO.getUsername());
+        queryWrapper.eq(User::getUserAccount, userAddDTO.getUserAccount());
         User dbUser = userMapper.selectOne(queryWrapper);
         if (dbUser != null){
-            log.error("UserServiceImpl.add error: the username already exists which is {}", userAddDTO.getUsername());
+            log.error("UserServiceImpl.add error: the userAccount already exists which is {}", userAddDTO.getUserAccount());
             throw new BaseException(MessageConstant.ACCOUNT_EXISTS);
         }
         //如果不存在，则新增
@@ -68,20 +68,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             userAddDTO.setUserRole("user");//默认角色为用户
         }
         //如果没有输入密码，则默认密码为123456
-        if (userAddDTO.getPassword()==null||userAddDTO.getPassword().isEmpty()) {
-            userAddDTO.setPassword(PasswordConstant.DEFAULT_PASSWORD);
+        if (userAddDTO.getUserPassword()==null||userAddDTO.getUserPassword().isEmpty()) {
+            userAddDTO.setUserPassword(PasswordConstant.DEFAULT_PASSWORD);
         }
         //限制密码长度在6-16位
-        else if (userAddDTO.getPassword().length() < 6 || userAddDTO.getPassword().length() > 16){
-            log.error("UserServiceImpl.add error: the password length not allowed which is {}", userAddDTO.getPassword());
+        else if (userAddDTO.getUserPassword().length() < 6 || userAddDTO.getUserPassword().length() > 16){
+            log.error("UserServiceImpl.add error: the userPassword length not allowed which is {}", userAddDTO.getUserPassword());
             throw new BaseException(MessageConstant.ERROR_ACCOUNT_AND_PASSWORD);
         }
         //如果没有输入用户名，则默认用户名为账号
-        if (userAddDTO.getNickname()==null||userAddDTO.getNickname().isEmpty()){
-            userAddDTO.setNickname(userAddDTO.getUsername());
+        if (userAddDTO.getUserName()==null||userAddDTO.getUserName().isEmpty()){
+            userAddDTO.setUserName(userAddDTO.getUserAccount());
         }
         User user = new User();
-        user.setUsername(userAddDTO.getUsername());
+        user.setUserAccount(userAddDTO.getUserAccount());
         BeanUtils.copyProperties(userAddDTO,user);
         userMapper.insert(user);
         log.info("UserServiceImpl.add success: add userAddDTO success which is {}", userAddDTO);
@@ -128,7 +128,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * 修改密码
      * @param userUpdatePasswordDTO 用户修改密码信息
      */
-    public void updatePassword(UserUpdatePasswordRequestDTO userUpdatePasswordDTO) {
+    public void updatePassword(UserUpdatePasswordDTO userUpdatePasswordDTO) {
         //要保证密码长度符合规定
         if (userUpdatePasswordDTO.getNewPassword().length() < 6 || userUpdatePasswordDTO.getNewPassword().length() > 16){
             log.error("UserServiceImpl.updatePassword error: the newPassword length not allowed which is {}", userUpdatePasswordDTO.getNewPassword());
@@ -144,7 +144,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         Long currentId = StpUtil.getLoginIdAsLong();
         User user = userMapper.selectById(currentId);
-        if (!user.getPassword().equals(userUpdatePasswordDTO.getOldPassword())){
+        if (!user.getUserPassword().equals(userUpdatePasswordDTO.getOldPassword())){
             log.error("UserServiceImpl.updatePassword error: the oldPassword is not correct which is {}", userUpdatePasswordDTO.getOldPassword());
             throw new BaseException(MessageConstant.OLD_PASSWORD_ERROR);
         }
@@ -152,8 +152,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             log.error("UserServiceImpl.updatePassword error: the newPassword and confirmPassword is not same which is {}", userUpdatePasswordDTO.getNewPassword());
             throw new BaseException(MessageConstant.CONFIRM_PASSWORD_ERROR);
         }
-        user.setPassword(userUpdatePasswordDTO.getNewPassword());
-        user.setUpdatedTime(LocalDateTime.now());
+        user.setUserPassword(userUpdatePasswordDTO.getNewPassword());
+        user.setUpdateTime(LocalDateTime.now());
 //        updateTimeById(currentId);
         userMapper.updateById(user);
         log.info("UserServiceImpl.updatePassword success: updatePassword success which is {}", userUpdatePasswordDTO.getNewPassword());
@@ -165,21 +165,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param userQuery
      * @return
      */
-    public PageDTO<UserResponseDTO> selectByPage(UserQuery userQuery) {
+    public PageDTO<UserVO> selectByPage(UserQuery userQuery) {
         // 1.构建基础查询条件 默认是按创建时间降序排序，如果指定了sortBy和isAsc（必须先指定sortBy,isAsc才生效），则按指定的排序和顺序排序
         Page<User> page = userQuery.toMpPage("created_time", false);
         // 2.分页查询
         Page<User> p = lambdaQuery()
-                .like(userQuery.getUsername()!=null,User::getUsername,userQuery.getUsername())
-                .like(userQuery.getNickname()!=null,User::getNickname,userQuery.getNickname())
+                .like(userQuery.getUserAccount()!=null,User::getUserAccount,userQuery.getUserAccount())
+                .like(userQuery.getUserName()!=null,User::getUserName,userQuery.getUserName())
                 .eq(userQuery.getUserRole()!=null,User::getUserRole,userQuery.getUserRole())
                 .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getCreatedTime,userQuery.getStartTime(),userQuery.getEndTime())
-                .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getUpdatedTime,userQuery.getStartTime(),userQuery.getEndTime())
+                .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getUpdateTime,userQuery.getStartTime(),userQuery.getEndTime())
                 .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getEditTime,userQuery.getStartTime(),userQuery.getEndTime())
                 .page(page);
         // 3.封装VO结果
         log.info("UserServiceImpl.selectByPage success: selectByPage success which is {}", p);
-        return PageDTO.of(p, UserResponseDTO.class);
+        return PageDTO.of(p, UserVO.class);
     }
 
     /**
@@ -215,23 +215,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * 登录
      * @param loginAndRegisterDTO 用户登录信息
      */
-    public User login(LoginAndRegisterRequestDTO loginAndRegisterDTO) {
-        if (StrUtil.isBlank(loginAndRegisterDTO.getUsername())||StrUtil.isBlank(loginAndRegisterDTO.getPassword())){
-            log.error("UserServiceImpl.login error: the username or password is empty which is {}", loginAndRegisterDTO);
+    public User login(LoginAndRegisterDTO loginAndRegisterDTO) {
+        if (StrUtil.isBlank(loginAndRegisterDTO.getUserAccount())||StrUtil.isBlank(loginAndRegisterDTO.getUserPassword())){
+            log.error("UserServiceImpl.login error: the userAccount or userPassword is empty which is {}", loginAndRegisterDTO);
             throw new BaseException(MessageConstant.ERROR_DATABASE);
         }
         //根据账号查询数据库的用户信息
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getUsername, loginAndRegisterDTO.getUsername());
+        queryWrapper.eq(User::getUserAccount, loginAndRegisterDTO.getUserAccount());
         User dbUser = userMapper.selectOne(queryWrapper);
         //若数据库无该账号，抛出异常
         if (dbUser == null){
-            log.error("UserServiceImpl.login error: the username is not found which is {}", loginAndRegisterDTO.getUsername());
+            log.error("UserServiceImpl.login error: the userAccount is not found which is {}", loginAndRegisterDTO.getUserAccount());
             throw new BaseException(MessageConstant.ACCOUNT_OR_PASSWORD_NOT_FOUND);
         }
         //若所输入密码与数据库密码不一致，抛出异常
-        if (!loginAndRegisterDTO.getPassword().equals(dbUser.getPassword())){
-            log.error("UserServiceImpl.login error: the password is not correct which is {}", loginAndRegisterDTO.getPassword());
+        if (!loginAndRegisterDTO.getUserPassword().equals(dbUser.getUserPassword())){
+            log.error("UserServiceImpl.login error: the userPassword is not correct which is {}", loginAndRegisterDTO.getUserPassword());
             throw new BaseException(MessageConstant.ACCOUNT_OR_PASSWORD_NOT_FOUND);
         }
         return dbUser;

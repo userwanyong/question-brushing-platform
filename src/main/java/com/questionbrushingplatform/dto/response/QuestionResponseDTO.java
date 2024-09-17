@@ -1,6 +1,5 @@
 package com.questionbrushingplatform.dto.response;
 
-import com.questionbrushingplatform.entity.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,16 +22,34 @@ public class QuestionResponseDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 问题id
+     */
     private String id;
 
+    /**
+     * 问题标题
+     */
     private String title;
 
+    /**
+     * 问题内容
+     */
     private String content;
 
+    /**
+     * 问题答案
+     */
     private String answer;
 
+    /**
+     * 问题解析
+     */
     private String userId;
 
-    private List<Tag> tags;
+    /**
+     * 问题标签
+     */
+    private List<TagResponseDTO> tags;
 
 }
