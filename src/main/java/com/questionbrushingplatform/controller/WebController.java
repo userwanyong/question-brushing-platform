@@ -75,6 +75,7 @@ public class WebController {
     public BaseResponse<String> register(@RequestBody LoginAndRegisterDTO loginAndRegisterDTO) {
         //检查一下是否填写了账号和密码
         if (StrUtil.isBlank(loginAndRegisterDTO.getUserAccount())||StrUtil.isBlank(loginAndRegisterDTO.getUserPassword())){
+            log.error("UserController.register error: the userAccount or userPassword is empty which is {}", loginAndRegisterDTO);
             throw new BaseException(MessageConstant.ERROR_ACCOUNT_AND_PASSWORD);
         }
         UserAddDTO userAddDTO = new UserAddDTO();

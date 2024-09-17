@@ -59,9 +59,10 @@ public class UserController {
 //        userService.isAdmin();
         //不能重复删除
         if (userService.getById(id) == null) {
+            log.error("UserController.deleteById error: the user not exist which is {}", id);
             return new BaseResponse<>(ResponseCode.NO_DATA);
         }
-        userService.updateTimeById(id);
+//        userService.updateTimeById(id);
         userService.removeById(id);
         return new BaseResponse<>(ResponseCode.SUCCESS);
     }
@@ -79,9 +80,10 @@ public class UserController {
         for (Long id : ids) {
             //不能重复删除
             if (userService.getById(id) == null) {
+                log.error("UserController.deleteById error: the user not exist which is {}", id);
                 return new BaseResponse<>(ResponseCode.NO_DATA);
             }
-            userService.updateTimeById(id);
+//            userService.updateTimeById(id);
         }
         userService.removeByIds(ids);
         return new BaseResponse<>(ResponseCode.SUCCESS);
@@ -99,7 +101,7 @@ public class UserController {
 //        userService.isAdmin();
         User user = new User();
         BeanUtils.copyProperties(userDTO,user);
-        user.setUpdateTime(LocalDateTime.now());
+//        user.setUpdateTime(LocalDateTime.now());
         userService.updateById(user);
         return new BaseResponse<>(ResponseCode.SUCCESS);
     }
@@ -115,7 +117,7 @@ public class UserController {
         User user = new User();
         BeanUtils.copyProperties(userDTO,user);
         user.setId(StpUtil.getLoginIdAsLong());
-        user.setUpdateTime(LocalDateTime.now());
+//        user.setUpdateTime(LocalDateTime.now());
         userService.updateById(user);
         return new BaseResponse<>(ResponseCode.SUCCESS);
     }
@@ -144,6 +146,7 @@ public class UserController {
 //        userService.isAdmin();
         User user = userService.getById(id);
         if (user == null) {
+            log.error("UserController.getById error: the user not exist which is {}", id);
             return new BaseResponse<>(ResponseCode.NO_DATA);
         }
         return new BaseResponse<>(ResponseCode.SUCCESS,user);
@@ -158,6 +161,7 @@ public class UserController {
     public BaseResponse<User> getCurrentUser() {
         User user = userService.getById((Serializable) StpUtil.getLoginId());
         if (user == null) {
+            log.error("UserController.getCurrentUser error: the user not exist which is {}", StpUtil.getLoginId());
             return new BaseResponse<>(ResponseCode.NO_DATA);
         }
         return new BaseResponse<>(ResponseCode.SUCCESS,user);
@@ -188,6 +192,7 @@ public class UserController {
     public BaseResponse<Boolean> addSignIn() {
         //必须登录才能签到
         if (!StpUtil.isLogin()) {
+            log.error("UserController.addSignIn error: the user not login");
             return new BaseResponse<>(ResponseCode.NO_LOGIN);
         }
         boolean result = userService.addUserSignIn(StpUtil.getLoginIdAsLong());
@@ -204,6 +209,7 @@ public class UserController {
     public BaseResponse<List<Integer>> getSignInRecord(Integer year) {
         //必须登录
         if (!StpUtil.isLogin()) {
+            log.error("UserController.getSignInRecord error: the user not login");
             return new BaseResponse<>(ResponseCode.NO_LOGIN);
         }
         List<Integer> userSignInRecord = userService.getUserSignInRecord(StpUtil.getLoginIdAsLong(), year);

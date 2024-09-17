@@ -18,6 +18,7 @@ import com.questionbrushingplatform.pojo.entity.User;
 import com.questionbrushingplatform.pojo.query.UserQuery;
 import com.questionbrushingplatform.pojo.vo.UserVO;
 import com.questionbrushingplatform.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBitSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +35,7 @@ import java.util.List;
  * @author 永
  */
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements UserService {
 
     @Autowired
@@ -50,6 +52,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     public void add(UserAddDTO userAddDTO) {
         //限制账号长度为11位
         if (userAddDTO.getUserAccount().length() != 11){
+            log.error("UserServiceImpl.add error: the userAccount length not allowed which is {}", userAddDTO.getUserAccount());
             throw new BaseException(MessageConstant.ACCOUNT_NOT_ALLOWED);
         }
         //先判断数据库是否有该账号，如果有，则不新增
@@ -57,6 +60,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         queryWrapper.eq(User::getUserAccount, userAddDTO.getUserAccount());
         User dbUser = userMapper.selectOne(queryWrapper);
         if (dbUser != null){
+            log.error("UserServiceImpl.add error: the userAccount already exists which is {}", userAddDTO.getUserAccount());
             throw new BaseException(MessageConstant.ACCOUNT_EXISTS);
         }
         //如果不存在，则新增
@@ -69,6 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         }
         //限制密码长度在6-16位
         else if (userAddDTO.getUserPassword().length() < 6 || userAddDTO.getUserPassword().length() > 16){
+            log.error("UserServiceImpl.add error: the userPassword length not allowed which is {}", userAddDTO.getUserPassword());
             throw new BaseException(MessageConstant.ERROR_ACCOUNT_AND_PASSWORD);
         }
         //如果没有输入用户名，则默认用户名为账号
@@ -79,6 +84,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         user.setUserAccount(userAddDTO.getUserAccount());
         BeanUtils.copyProperties(userAddDTO,user);
         userMapper.insert(user);
+        log.info("UserServiceImpl.add success: add userAddDTO success which is {}", userAddDTO);
     }
 
     /**
@@ -104,6 +110,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
 //            bitSet.expire(6, TimeUnit.DAYS);
         }
         //当天已签到
+        log.info("UserServiceImpl.addUserSignIn success: add userSignIn success which is {}", userId);
         return true;
     }
 
@@ -111,11 +118,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
      * 通用更新时间
      * @param id
      */
-    public void updateTimeById(Long id) {
-        User user = userMapper.selectById(id);
-        user.setUpdateTime(LocalDateTime.now());
-        userMapper.updateById(user);
-    }
+//    public void updateTimeById(Long id) {
+//        User user = userMapper.selectById(id);
+//        user.setUpdateTime(LocalDateTime.now());
+//        userMapper.updateById(user);
+//    }
 
     /**
      * 修改密码
@@ -124,25 +131,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     public void updatePassword(UserUpdatePasswordDTO userUpdatePasswordDTO) {
         //要保证密码长度符合规定
         if (userUpdatePasswordDTO.getNewPassword().length() < 6 || userUpdatePasswordDTO.getNewPassword().length() > 16){
+            log.error("UserServiceImpl.updatePassword error: the newPassword length not allowed which is {}", userUpdatePasswordDTO.getNewPassword());
             throw new BaseException(MessageConstant.ERROR_DATABASE);
         }
         if (userUpdatePasswordDTO.getOldPassword().length() < 6 || userUpdatePasswordDTO.getOldPassword().length() > 16){
+            log.error("UserServiceImpl.updatePassword error: the oldPassword length not allowed which is {}", userUpdatePasswordDTO.getOldPassword());
             throw new BaseException(MessageConstant.ERROR_DATABASE);
         }
         if (userUpdatePasswordDTO.getConfirmPassword().length() < 6 || userUpdatePasswordDTO.getConfirmPassword().length() > 16){
+            log.error("UserServiceImpl.updatePassword error: the confirmPassword length not allowed which is {}", userUpdatePasswordDTO.getConfirmPassword());
             throw new BaseException(MessageConstant.ERROR_DATABASE);
         }
         Long currentId = StpUtil.getLoginIdAsLong();
         User user = userMapper.selectById(currentId);
         if (!user.getUserPassword().equals(userUpdatePasswordDTO.getOldPassword())){
+            log.error("UserServiceImpl.updatePassword error: the oldPassword is not correct which is {}", userUpdatePasswordDTO.getOldPassword());
             throw new BaseException(MessageConstant.OLD_PASSWORD_ERROR);
         }
         if (!userUpdatePasswordDTO.getNewPassword().equals(userUpdatePasswordDTO.getConfirmPassword())){
+            log.error("UserServiceImpl.updatePassword error: the newPassword and confirmPassword is not same which is {}", userUpdatePasswordDTO.getNewPassword());
             throw new BaseException(MessageConstant.CONFIRM_PASSWORD_ERROR);
         }
         user.setUserPassword(userUpdatePasswordDTO.getNewPassword());
-        updateTimeById(currentId);
+        user.setUpdateTime(LocalDateTime.now());
+//        updateTimeById(currentId);
         userMapper.updateById(user);
+        log.info("UserServiceImpl.updatePassword success: updatePassword success which is {}", userUpdatePasswordDTO.getNewPassword());
     }
 
 
@@ -164,6 +178,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
                 .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getEditTime,userQuery.getStartTime(),userQuery.getEndTime())
                 .page(page);
         // 3.封装VO结果
+        log.info("UserServiceImpl.selectByPage success: selectByPage success which is {}", p);
         return PageDTO.of(p, UserVO.class);
     }
 
@@ -192,6 +207,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
             //从下一位开始继续查找被设为1的位
             index = newBitSet.nextSetBit(index + 1);
         }
+        log.info("UserServiceImpl.getUserSignInRecord success: getUserSignInRecord success which is {}", list);
         return list;
     }
 
@@ -201,6 +217,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
      */
     public User login(LoginAndRegisterDTO loginAndRegisterDTO) {
         if (StrUtil.isBlank(loginAndRegisterDTO.getUserAccount())||StrUtil.isBlank(loginAndRegisterDTO.getUserPassword())){
+            log.error("UserServiceImpl.login error: the userAccount or userPassword is empty which is {}", loginAndRegisterDTO);
             throw new BaseException(MessageConstant.ERROR_DATABASE);
         }
         //根据账号查询数据库的用户信息
@@ -209,10 +226,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         User dbUser = userMapper.selectOne(queryWrapper);
         //若数据库无该账号，抛出异常
         if (dbUser == null){
+            log.error("UserServiceImpl.login error: the userAccount is not found which is {}", loginAndRegisterDTO.getUserAccount());
             throw new BaseException(MessageConstant.ACCOUNT_OR_PASSWORD_NOT_FOUND);
         }
         //若所输入密码与数据库密码不一致，抛出异常
         if (!loginAndRegisterDTO.getUserPassword().equals(dbUser.getUserPassword())){
+            log.error("UserServiceImpl.login error: the userPassword is not correct which is {}", loginAndRegisterDTO.getUserPassword());
             throw new BaseException(MessageConstant.ACCOUNT_OR_PASSWORD_NOT_FOUND);
         }
         return dbUser;

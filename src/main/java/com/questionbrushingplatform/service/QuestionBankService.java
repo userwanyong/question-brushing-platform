@@ -35,7 +35,7 @@ public interface QuestionBankService extends IService<QuestionBank> {
      * 通用更新时间
      * @param id
      */
-    void updateTimeById(Long id);
+//    void updateTimeById(Long id);
 
     /**
      * 分页查询题库

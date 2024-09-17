@@ -90,12 +90,13 @@ public class QuestionBankController {
 //        userService.isAdmin();
         //判断该id是否已存在
         if (questionBankService.getById(questionBankUpdateDTO.getId())==null) {
+            log.error("QuestionBankController.update error: the question bank does not exist which is {}", questionBankUpdateDTO.getId());
             throw new BaseException(MessageConstant.QUEST_BANK_NOT_FOUND);
         }
         questionBankService.isExist(questionBankUpdateDTO.getTitle());
         QuestionBank questionBank = new QuestionBank();
         BeanUtils.copyProperties(questionBankUpdateDTO,questionBank);
-        questionBank.setUpdateTime(LocalDateTime.now());
+//        questionBank.setUpdateTime(LocalDateTime.now());
         questionBankService.updateById(questionBank);
         return new BaseResponse<>(ResponseCode.SUCCESS, questionBankUpdateDTO);
     }
@@ -112,6 +113,7 @@ public class QuestionBankController {
 //        userService.isAdmin();
         //判断该id是否存在
         if (questionBankService.getById(id)==null) {
+            log.error("QuestionBankController.getById error: the question bank does not exist which is {}", id);
             throw new BaseException(MessageConstant.QUEST_BANK_NOT_FOUND);
         }
         QuestionBank res = questionBankService.getById(id);

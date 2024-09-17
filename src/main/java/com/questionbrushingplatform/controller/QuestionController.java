@@ -165,28 +165,28 @@ public class QuestionController {
         return new BaseResponse<>(ResponseCode.SUCCESS, questionResponseDTO);
     }
 
-    @GetMapping("/list")
-    @ApiOperation("获取题目列表")
-    public BaseResponse<List<QuestionResponseDTO>> listQuestions() {
-        List<Question> questions = questionService.listQuestions();
-        List<QuestionResponseDTO> questionResponseDTOList = questions.stream()
-                .map(question -> {
-                    QuestionResponseDTO questionResponseDTO = new QuestionResponseDTO();
-                    questionResponseDTO.setId(String.valueOf(question.getId()));
-                    questionResponseDTO.setTitle(question.getTitle());
-                    questionResponseDTO.setContent(question.getContent());
-                    questionResponseDTO.setAnswer(question.getAnswer());
-                    questionResponseDTO.setUserId(String.valueOf(question.getUserId()));
-                    questionResponseDTO.setTags(
-                            questionTagsMappingService.listQuestionTagsMappingsByQuestionId(question.getId()).stream()
-                                    .map(mapping -> tagService.getTagById(mapping.getTagId()))
-                                    .collect(Collectors.toList()));
-                    return questionResponseDTO;
-                })
-                .collect(Collectors.toList());
-        log.info("QuestionController.listQuestions success: {}", questionResponseDTOList);
-        return new BaseResponse<>(ResponseCode.SUCCESS, questionResponseDTOList);
-    }
+//    @GetMapping("/list")
+//    @ApiOperation("获取题目列表")
+//    public BaseResponse<List<QuestionResponseDTO>> listQuestions() {
+//        List<Question> questions = questionService.listQuestions();
+//        List<QuestionResponseDTO> questionResponseDTOList = questions.stream()
+//                .map(question -> {
+//                    QuestionResponseDTO questionResponseDTO = new QuestionResponseDTO();
+//                    questionResponseDTO.setId(String.valueOf(question.getId()));
+//                    questionResponseDTO.setTitle(question.getTitle());
+//                    questionResponseDTO.setContent(question.getContent());
+//                    questionResponseDTO.setAnswer(question.getAnswer());
+//                    questionResponseDTO.setUserId(String.valueOf(question.getUserId()));
+//                    questionResponseDTO.setTags(
+//                            questionTagsMappingService.listQuestionTagsMappingsByQuestionId(question.getId()).stream()
+//                                    .map(mapping -> tagService.getTagById(mapping.getTagId()))
+//                                    .collect(Collectors.toList()));
+//                    return questionResponseDTO;
+//                })
+//                .collect(Collectors.toList());
+//        log.info("QuestionController.listQuestions success: {}", questionResponseDTOList);
+//        return new BaseResponse<>(ResponseCode.SUCCESS, questionResponseDTOList);
+//    }
 
     @GetMapping("/list")
     @ApiOperation("获取题目列表")

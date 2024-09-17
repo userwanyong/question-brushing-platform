@@ -1,4 +1,5 @@
 package com.questionbrushingplatform.controller;
+
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
 import com.questionbrushingplatform.pojo.entity.Tag;
@@ -49,7 +50,7 @@ public class TagController {
      */
     @PostMapping("/delete")
     public BaseResponse<Boolean> delete(Integer id) {
-        if (tagService.deleteTag(id)) {
+        if (!tagService.deleteTag(id)) {
             log.error("TagController.delete error: delete tag failed which is {}", id);
             return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
         }

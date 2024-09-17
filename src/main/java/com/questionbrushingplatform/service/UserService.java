@@ -32,7 +32,7 @@ public interface UserService extends IService<User> {
      * 通用更新时间
      * @param id
      */
-    void updateTimeById(Long id);
+//    void updateTimeById(Long id);
 
     /**
      * 分页查询用户

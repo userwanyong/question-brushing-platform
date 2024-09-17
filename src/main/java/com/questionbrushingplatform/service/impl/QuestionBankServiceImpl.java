@@ -16,6 +16,7 @@ import com.questionbrushingplatform.pojo.entity.QuestionBank;
 import com.questionbrushingplatform.pojo.query.QuestionBankQuery;
 import com.questionbrushingplatform.pojo.vo.QuestionBankVO;
 import com.questionbrushingplatform.service.QuestionBankService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,22 +27,22 @@ import java.time.LocalDateTime;
  * @author 永
  */
 @Service
+@Slf4j
 public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, QuestionBank> implements QuestionBankService {
 
     @Autowired
     private QuestionBankMapper questionBankMapper;
-    @Autowired
-    private QuestionMapper questionMapper;
+
 
     /**
      * 通用更新时间
      * @param id
      */
-    public void updateTimeById(Long id) {
-        QuestionBank questionBank = questionBankMapper.selectById(id);
-        questionBank.setUpdateTime(LocalDateTime.now());
-        questionBankMapper.updateById(questionBank);
-    }
+//    public void updateTimeById(Long id) {
+//        QuestionBank questionBank = questionBankMapper.selectById(id);
+//        questionBank.setUpdateTime(LocalDateTime.now());
+//        questionBankMapper.updateById(questionBank);
+//    }
 
 
     /**
@@ -53,6 +54,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         queryWrapper.eq(QuestionBank::getTitle, title);
         QuestionBank questionBank = questionBankMapper.selectOne(queryWrapper);
         if (questionBank != null) {
+            log.error("QuestionBankServiceImpl.isExist error: the title is exists which is {}", title);
             throw new BaseException(MessageConstant.QUESTION_BANK_EXISTS);
         }
     }
@@ -64,6 +66,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     public void add(QuestionBankAddDTO questionBankAddDTO) {
         //必须要有题库名
         if (questionBankAddDTO.getTitle() == null|| questionBankAddDTO.getTitle().isEmpty()) {
+            log.error("QuestionBankServiceImpl.add error: the title is bank witch is {}", questionBankAddDTO.getTitle());
             throw new BaseException(MessageConstant.QUESTION_BANK_TITLE_NOT_NULL);
         }
         isExist(questionBankAddDTO.getTitle());
@@ -71,6 +74,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         BeanUtils.copyProperties(questionBankAddDTO, questionBank);
         questionBank.setUserId(StpUtil.getLoginIdAsLong());
         questionBankMapper.insert(questionBank);
+        log.info("QuestionBankServiceImpl.add success: add questionBankAddDTO success which is {}", questionBankAddDTO);
 
     }
 
@@ -93,8 +97,9 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 //            throw new BaseException(MessageConstant.QUESTION_BANK_NOT_EMPTY);
 //        }
         //更新时间
-        updateTimeById(id);
+//        updateTimeById(id);
         questionBankMapper.deleteById(id);
+        log.info("QuestionBankServiceImpl.deleteById success: delete questionBank success which is {}", id);
 
 
     }
@@ -120,12 +125,13 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 //            throw new BaseException(MessageConstant.QUESTION_BANK_NOT_EMPTY);
 //        }
         //更新时间
-        LambdaUpdateWrapper<QuestionBank> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.set(QuestionBank::getUpdateTime, LocalDateTime.now())
-                .in(QuestionBank::getId, ids);
-        questionBankMapper.update(null, updateWrapper);
+//        LambdaUpdateWrapper<QuestionBank> updateWrapper = new LambdaUpdateWrapper<>();
+//        updateWrapper.set(QuestionBank::getUpdateTime, LocalDateTime.now())
+//                .in(QuestionBank::getId, ids);
+//        questionBankMapper.update(null, updateWrapper);
         //删除所选题库
         questionBankMapper.delete(queryWrapper);
+        log.info("QuestionBankServiceImpl.deleteByIds success: delete questionBank success which is {}", ids);
 
     }
 
@@ -145,6 +151,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getUpdateTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
                 .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getEditTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
                 .page(page);
+        log.info("QuestionBankServiceImpl.selectByPage success: selectByPage success which is {}", p);
         // 3.封装VO结果
         return PageDTO.of(p, QuestionBankVO.class);
     }
