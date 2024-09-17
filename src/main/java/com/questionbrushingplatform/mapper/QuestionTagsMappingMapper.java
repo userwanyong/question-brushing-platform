@@ -1,6 +1,6 @@
 package com.questionbrushingplatform.mapper;
 
-import com.questionbrushingplatform.pojo.entity.QuestionTagsMapping;
+import com.questionbrushingplatform.entity.QuestionTagsMapping;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

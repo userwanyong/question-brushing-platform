@@ -1,9 +1,6 @@
-package com.questionbrushingplatform.pojo.dto;
+package com.questionbrushingplatform.dto.request;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
-import com.questionbrushingplatform.pojo.entity.Question;
+import com.questionbrushingplatform.entity.Question;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.Id;
@@ -20,7 +17,7 @@ import java.util.List;
  */
 @Document(indexName = "question")
 @Data
-public class QuestionEsDTO implements Serializable {
+public class QuestionEsRequestDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -59,11 +56,11 @@ public class QuestionEsDTO implements Serializable {
      * @param question
      * @return
      */
-    public static QuestionEsDTO objToDto(Question question) {
+    public static QuestionEsRequestDTO objToDto(Question question) {
         if (question==null){
             return null;
         }
-        QuestionEsDTO questionEsDTO = new QuestionEsDTO();
+        QuestionEsRequestDTO questionEsDTO = new QuestionEsRequestDTO();
         BeanUtils.copyProperties(question,questionEsDTO);
         //TODO
 //        String tagsStr = question.getTags();
@@ -79,7 +76,7 @@ public class QuestionEsDTO implements Serializable {
      * @param questionEsDTO
      * @return
      */
-    public static Question dtoToObj (QuestionEsDTO questionEsDTO) {
+    public static Question dtoToObj (QuestionEsRequestDTO questionEsDTO) {
         if (questionEsDTO==null){
             return null;
         }

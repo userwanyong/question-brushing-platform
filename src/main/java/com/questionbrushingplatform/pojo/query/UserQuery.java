@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @Data
 public class UserQuery extends PageQuery {
 
-    private String userAccount;
-    private String userName;
+    private String username;
+    private String nickname;
     private String userRole;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

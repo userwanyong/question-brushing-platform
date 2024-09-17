@@ -1,7 +1,7 @@
 package com.questionbrushingplatform.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.questionbrushingplatform.pojo.entity.Question;
+import com.questionbrushingplatform.entity.Question;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

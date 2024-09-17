@@ -1,6 +1,6 @@
 package com.questionbrushingplatform.dto.response;
 
-import com.questionbrushingplatform.pojo.entity.Tag;
+import com.questionbrushingplatform.entity.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

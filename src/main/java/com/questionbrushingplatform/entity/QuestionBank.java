@@ -1,8 +1,8 @@
-package com.questionbrushingplatform.pojo.entity;
+package com.questionbrushingplatform.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,46 +18,50 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("user")
-public class User implements Serializable {
+@TableName("bank")
+public class QuestionBank implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id",type = IdType.ASSIGN_ID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
-    @TableField("user_account")
-    private String userAccount;
+    @TableField("title")
+    private String title;
 
-    @TableField("user_password")
-    private String userPassword;
+    @TableField("description")
+    private String description;
 
-    @TableField("user_name")
-    private String userName;
+    @TableField("picture")
+    private String picture;
 
-    @TableField("user_avatar")
-    private String userAvatar;
-
-    @TableField("user_profile")
-    private String userProfile;
-
-    @TableField("user_role")
-    private String userRole;
+    @TableField("user_id")
+    @JsonProperty("user_id")
+    private Long userId;
 
     @TableField("edit_time")
+    @JsonProperty("edit_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime editTime;
 
     @TableField("created_time")
+    @JsonProperty("created_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime;
 
     @TableField("update_time")
+    @JsonProperty("update_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
 
     @TableField("is_delete")
+    @JsonProperty("is_delete")
     @TableLogic
     private Integer isDelete;
+
+    @TableField("priority")
+    @JsonProperty("priority")
+    private Integer priority;
+
 
 }

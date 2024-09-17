@@ -1,6 +1,6 @@
 package com.questionbrushingplatform.service;
 
-import com.questionbrushingplatform.pojo.entity.Tag;
+import com.questionbrushingplatform.entity.Tag;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

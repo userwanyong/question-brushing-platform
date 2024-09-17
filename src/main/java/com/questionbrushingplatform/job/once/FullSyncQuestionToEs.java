@@ -1,9 +1,9 @@
 package com.questionbrushingplatform.job.once;
 
 import cn.hutool.core.collection.CollUtil;
+import com.questionbrushingplatform.dto.request.QuestionEsRequestDTO;
 import com.questionbrushingplatform.esdao.QuestionEsDao;
-import com.questionbrushingplatform.pojo.dto.QuestionEsDTO;
-import com.questionbrushingplatform.pojo.entity.Question;
+import com.questionbrushingplatform.entity.Question;
 import com.questionbrushingplatform.service.QuestionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -36,8 +36,8 @@ public class FullSyncQuestionToEs implements CommandLineRunner {
             return;
         }
         //转为ES实体类
-        List<QuestionEsDTO> questionEsDTOList = questionList.stream()
-                .map(QuestionEsDTO::objToDto)
+        List<QuestionEsRequestDTO> questionEsDTOList = questionList.stream()
+                .map(QuestionEsRequestDTO::objToDto)
                 .collect(Collectors.toList());
         //分页批量插入到ES
         final int pageSize = 500;

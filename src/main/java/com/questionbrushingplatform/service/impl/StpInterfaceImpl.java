@@ -1,7 +1,7 @@
 package com.questionbrushingplatform.service.impl;
 
 import cn.dev33.satoken.stp.StpInterface;
-import com.questionbrushingplatform.pojo.entity.User;
+import com.questionbrushingplatform.entity.User;
 import com.questionbrushingplatform.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

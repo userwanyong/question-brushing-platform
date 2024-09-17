@@ -3,7 +3,7 @@ package com.questionbrushingplatform.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.questionbrushingplatform.pojo.entity.Question;
+import com.questionbrushingplatform.entity.Question;
 import com.questionbrushingplatform.service.QuestionService;
 import com.questionbrushingplatform.mapper.QuestionMapper;
 import org.springframework.stereotype.Service;

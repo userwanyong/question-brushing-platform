@@ -1,12 +1,12 @@
-package com.questionbrushingplatform.pojo.entity;
+package com.questionbrushingplatform.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
 
 /**
  * 
@@ -30,18 +30,21 @@ public class Tag implements Serializable {
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonProperty("created_time")
     private Date createdTime;
 
     /**
      * 更新时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonProperty("updated_time")
     private Date updatedTime;
 
     /**
      * 是否删除
      */
     @TableLogic
+    @JsonProperty("is_delete")
     private Integer isDeleted;
 
     @TableField(exist = false)

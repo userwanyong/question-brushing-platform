@@ -1,11 +1,14 @@
 package com.questionbrushingplatform.service;
 
+
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.questionbrushingplatform.pojo.dto.PageDTO;
-import com.questionbrushingplatform.pojo.dto.QuestionBankAddDTO;
-import com.questionbrushingplatform.pojo.entity.QuestionBank;
+
+import com.questionbrushingplatform.dto.request.PageDTO;
+import com.questionbrushingplatform.dto.request.QuestionBankAddRequestDTO;
+import com.questionbrushingplatform.dto.response.QuestionBankResponseDTO;
+import com.questionbrushingplatform.entity.QuestionBank;
 import com.questionbrushingplatform.pojo.query.QuestionBankQuery;
-import com.questionbrushingplatform.pojo.vo.QuestionBankVO;
+
 
 
 /**
@@ -17,7 +20,7 @@ public interface QuestionBankService extends IService<QuestionBank> {
      * 新增题库
      * @param questionBankAddDTO
      */
-    void add(QuestionBankAddDTO questionBankAddDTO);
+    void add(QuestionBankAddRequestDTO questionBankAddDTO);
 
     /**
      * 根据id删除题库
@@ -42,7 +45,7 @@ public interface QuestionBankService extends IService<QuestionBank> {
      * @param questionBankQuery
      * @return
      */
-    PageDTO<QuestionBankVO> selectByPage(QuestionBankQuery questionBankQuery);
+    PageDTO<QuestionBankResponseDTO> selectByPage(QuestionBankQuery questionBankQuery);
 
 
     /**

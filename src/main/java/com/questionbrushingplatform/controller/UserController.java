@@ -3,13 +3,15 @@ package com.questionbrushingplatform.controller;
 import cn.dev33.satoken.stp.StpUtil;
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
-import com.questionbrushingplatform.pojo.dto.PageDTO;
-import com.questionbrushingplatform.pojo.dto.UserAddDTO;
-import com.questionbrushingplatform.pojo.dto.UserDTO;
-import com.questionbrushingplatform.pojo.dto.UserUpdatePasswordDTO;
-import com.questionbrushingplatform.pojo.entity.User;
+
+import com.questionbrushingplatform.dto.request.PageDTO;
+import com.questionbrushingplatform.dto.request.UserAddRequestDTO;
+import com.questionbrushingplatform.dto.request.UserRequestDTO;
+import com.questionbrushingplatform.dto.request.UserUpdatePasswordRequestDTO;
+import com.questionbrushingplatform.dto.response.UserResponseDTO;
+import com.questionbrushingplatform.entity.User;
 import com.questionbrushingplatform.pojo.query.UserQuery;
-import com.questionbrushingplatform.pojo.vo.UserVO;
+
 import com.questionbrushingplatform.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+
 import java.util.List;
 
 /**
@@ -42,7 +44,7 @@ public class UserController {
      */
     @PostMapping("/add")
     @ApiOperation("新增用户")
-    public BaseResponse<Boolean> add(@RequestBody UserAddDTO userAddDTO) {
+    public BaseResponse<Boolean> add(@RequestBody UserAddRequestDTO userAddDTO) {
         userService.add(userAddDTO);
         return new BaseResponse<>(ResponseCode.SUCCESS);
     }
@@ -96,7 +98,7 @@ public class UserController {
      */
     @PutMapping("/update")
     @ApiOperation("修改用户信息")
-    public BaseResponse<UserDTO> update(@RequestBody UserDTO userDTO) {
+    public BaseResponse<UserRequestDTO> update(@RequestBody UserRequestDTO userDTO) {
         //判断是否为管理员
 //        userService.isAdmin();
         User user = new User();
@@ -113,7 +115,7 @@ public class UserController {
      */
     @PutMapping("/updateCurrentInfo")
     @ApiOperation("修改当前用户信息")
-    public BaseResponse<UserDTO> updateCurrentInfo(@RequestBody UserDTO userDTO) {
+    public BaseResponse<UserRequestDTO> updateCurrentInfo(@RequestBody UserRequestDTO userDTO) {
         User user = new User();
         BeanUtils.copyProperties(userDTO,user);
         user.setId(StpUtil.getLoginIdAsLong());
@@ -129,7 +131,7 @@ public class UserController {
      */
     @PutMapping("/updatePassword")
     @ApiOperation("修改当前登录用户密码")
-    public BaseResponse<UserUpdatePasswordDTO> updatePassword(@RequestBody UserUpdatePasswordDTO userUpdatePasswordDTO) {
+    public BaseResponse<UserUpdatePasswordRequestDTO> updatePassword(@RequestBody UserUpdatePasswordRequestDTO userUpdatePasswordDTO) {
         userService.updatePassword(userUpdatePasswordDTO);
         return new BaseResponse<>(ResponseCode.SUCCESS);
     }
@@ -175,10 +177,10 @@ public class UserController {
      */
     @GetMapping("/selectByPage")
     @ApiOperation("分页查询用户")
-    public PageDTO<UserVO> selectByPage(UserQuery userQuery) {
+    public PageDTO<UserResponseDTO> selectByPage(UserQuery userQuery) {
         //判断是否为管理员
 //        userService.isAdmin();
-        PageDTO<UserVO> page=userService.selectByPage(userQuery);
+        PageDTO<UserResponseDTO> page=userService.selectByPage(userQuery);
         return page;
     }
 

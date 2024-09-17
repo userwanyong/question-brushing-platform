@@ -1,10 +1,10 @@
 package com.questionbrushingplatform.job.cycle;
 
 import cn.hutool.core.collection.CollUtil;
+import com.questionbrushingplatform.dto.request.QuestionEsRequestDTO;
 import com.questionbrushingplatform.esdao.QuestionEsDao;
 import com.questionbrushingplatform.mapper.QuestionMapper;
-import com.questionbrushingplatform.pojo.dto.QuestionEsDTO;
-import com.questionbrushingplatform.pojo.entity.Question;
+import com.questionbrushingplatform.entity.Question;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -40,8 +40,8 @@ public class IncSyncQuestionToEs {
             log.info("暂无新增数据");
             return;
         }
-        List<QuestionEsDTO> questionEsDTOList = questionList.stream()
-                .map(QuestionEsDTO::objToDto)
+        List<QuestionEsRequestDTO> questionEsDTOList = questionList.stream()
+                .map(QuestionEsRequestDTO::objToDto)
                 .collect(Collectors.toList());
         final int pageSize = 500;
         int total = questionEsDTOList.size();

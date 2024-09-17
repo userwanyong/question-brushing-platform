@@ -1,10 +1,11 @@
-package com.questionbrushingplatform.pojo.entity;
+package com.questionbrushingplatform.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 题目表
@@ -42,21 +43,25 @@ public class Question implements Serializable {
     /**
      * 创建用户id
      */
+    @JsonProperty("user_id")
     private Long userId;
 
     /**
      * 审核信息
      */
+    @JsonProperty("review_message")
     private String reviewMessage;
 
     /**
      * 审核人id
      */
+    @JsonProperty("reviewer_id")
     private Long reviewerId;
 
     /**
      * 审核时间
      */
+    @JsonProperty("review_time")
     private Date reviewTime;
 
     /**
@@ -67,17 +72,20 @@ public class Question implements Serializable {
     /**
      * 创建时间
      */
+    @JsonProperty("created_time")
     private Date createdTime;
 
     /**
      * 更新时间
      */
+    @JsonProperty("update_time")
     private Date updateTime;
 
     /**
      * 是否删除
      */
     @TableLogic
+    @JsonProperty("is_delete")
     private Integer isDelete;
 
     @TableField(exist = false)

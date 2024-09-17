@@ -2,7 +2,7 @@ package com.questionbrushingplatform.controller;
 
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
-import com.questionbrushingplatform.pojo.entity.Tag;
+import com.questionbrushingplatform.entity.Tag;
 import com.questionbrushingplatform.service.TagService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;

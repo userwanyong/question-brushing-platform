@@ -2,7 +2,7 @@ package com.questionbrushingplatform.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.questionbrushingplatform.pojo.entity.User;
+import com.questionbrushingplatform.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

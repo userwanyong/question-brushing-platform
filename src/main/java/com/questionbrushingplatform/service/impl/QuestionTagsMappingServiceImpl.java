@@ -2,7 +2,7 @@ package com.questionbrushingplatform.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.questionbrushingplatform.pojo.entity.QuestionTagsMapping;
+import com.questionbrushingplatform.entity.QuestionTagsMapping;
 import com.questionbrushingplatform.service.QuestionTagsMappingService;
 import com.questionbrushingplatform.mapper.QuestionTagsMappingMapper;
 import org.springframework.stereotype.Service;

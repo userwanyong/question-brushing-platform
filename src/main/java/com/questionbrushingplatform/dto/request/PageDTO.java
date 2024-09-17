@@ -1,7 +1,8 @@
-package com.questionbrushingplatform.pojo.dto;
+package com.questionbrushingplatform.dto.request;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -3,7 +3,6 @@ package com.questionbrushingplatform.handler;
 
 import cn.dev33.satoken.util.SaResult;
 import com.questionbrushingplatform.common.constant.MessageConstant;
-import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
