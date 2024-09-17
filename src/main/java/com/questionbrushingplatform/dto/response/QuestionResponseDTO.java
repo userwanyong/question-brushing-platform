@@ -1,12 +1,11 @@
 package com.questionbrushingplatform.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.questionbrushingplatform.entity.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -20,38 +19,18 @@ import java.util.List;
 @AllArgsConstructor
 public class QuestionResponseDTO implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 问题id
-     */
     private String id;
 
-    /**
-     * 问题标题
-     */
     private String title;
 
-    /**
-     * 问题内容
-     */
     private String content;
 
-    /**
-     * 问题答案
-     */
     private String answer;
 
-    /**
-     * 问题解析
-     */
-    @JsonProperty("user_id")
     private String userId;
 
-    /**
-     * 问题标签
-     */
-    private List<TagResponseDTO> tags;
+    private List<Tag> tags;
 
 }

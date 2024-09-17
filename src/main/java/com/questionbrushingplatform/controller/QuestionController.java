@@ -6,7 +6,6 @@ import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
 import com.questionbrushingplatform.dto.request.QuestionRequestDTO;
 import com.questionbrushingplatform.dto.response.QuestionResponseDTO;
-import com.questionbrushingplatform.dto.response.TagResponseDTO;
 import com.questionbrushingplatform.entity.Question;
 import com.questionbrushingplatform.entity.QuestionTagsMapping;
 import com.questionbrushingplatform.entity.Tag;
@@ -44,13 +43,12 @@ public class QuestionController {
     @ApiOperation("添加题目")
     @Transactional(rollbackFor = Exception.class)
     public BaseResponse<QuestionResponseDTO> addQuestion(@RequestBody QuestionRequestDTO questionDTO) {
-        // check if the user id is equal to the login id
+        Long questionId;
         if (StpUtil.getLoginIdAsLong() != Long.parseLong(questionDTO.getUserId())) {
             log.error("QuestionController.addQuestion error: user id {} is not equal to login id {}", questionDTO.getUserId(), StpUtil.getLoginIdAsLong());
             return new BaseResponse<>(ResponseCode.PARAMETER_ERROR);
         }
         try {
-            // convert QuestionRequestDTO to Question
             Question question = new Question();
             question.setTitle(questionDTO.getTitle());
             question.setContent(questionDTO.getContent());
@@ -58,16 +56,16 @@ public class QuestionController {
             question.setUserId(Long.valueOf(questionDTO.getUserId()));
             questionService.addQuestion(question);
             Question res = questionService.getQuestionByTitle(question.getTitle());
+            questionId = res.getId();
             // Convert List<String> to List<QuestionTagsMapping>
             List<QuestionTagsMapping> questionTagsMappings = questionDTO.getTags().stream()
                     .map(tagService::getTagById)
                     .map(tag -> new QuestionTagsMapping() {{
-                        setQuestionId(res.getId());
+                        setQuestionId(questionId);
                         setTagId(tag.getId());
                     }})
                     .collect(Collectors.toList());
-            questionTagsMappingService.updateQuestionTagsMapping(questionTagsMappings);
-            // return the added question
+            questionTagsMappingService.addQuestionTagsMappings(questionTagsMappings);
             QuestionResponseDTO questionResponseDTO = new QuestionResponseDTO();
             questionResponseDTO.setId(String.valueOf(res.getId()));
             questionResponseDTO.setTitle(res.getTitle());
@@ -76,10 +74,7 @@ public class QuestionController {
             questionResponseDTO.setUserId(String.valueOf(res.getUserId()));
             questionResponseDTO.setTags(
                     questionTagsMappings.stream()
-                            .map(mapping -> {
-                                Tag tag = tagService.getTagById(mapping.getTagId());
-                                return new TagResponseDTO(tag.getId(), tag.getName());
-                            })
+                            .map(mapping -> tagService.getTagById(mapping.getTagId()))
                             .collect(Collectors.toList()));
             return new BaseResponse<>(ResponseCode.SUCCESS, questionResponseDTO);
         } catch (RuntimeException e) {
@@ -93,16 +88,15 @@ public class QuestionController {
     @Transactional(rollbackFor = Exception.class)
     public BaseResponse<String> deleteQuestion(@PathVariable String id) {
         try {
-            // delete the question and the mappings
             questionService.deleteQuestion(Long.valueOf(id));
             questionTagsMappingService.listQuestionTagsMappingsByQuestionId(Long.valueOf(id))
                     .forEach(mapping -> questionTagsMappingService.deleteQuestionTagsMapping(mapping.getId()));
-            log.info("QuestionController.deleteQuestion success: which question id is {}", id);
-            return new BaseResponse<>(ResponseCode.SUCCESS);
         } catch (RuntimeException e) {
             log.error("QuestionController.deleteQuestion error: which id is {}", id, e);
             return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
         }
+        log.info("QuestionController.deleteQuestion success: which question id is {}", id);
+        return new BaseResponse<>(ResponseCode.SUCCESS);
     }
 
     @PostMapping("/update/{id}")
@@ -123,14 +117,14 @@ public class QuestionController {
             // get the existing tag ids and the new tag ids
             List<Integer> existingTagIds = questionTagsMappingService.listQuestionTagsMappingsByQuestionId(id).stream()
                     .map(QuestionTagsMapping::getTagId)
-                    .toList();
+                    .collect(Collectors.toList());
 
             // get the new tag ids
             List<Integer> newTagIds = questionDTO.getTags().stream()
                     .distinct()
                     .map(tagService::getTagById)
                     .map(Tag::getId)
-                    .toList();
+                    .collect(Collectors.toList());
 
             // Delete mappings that are not in the new tag list
             existingTagIds.stream()
@@ -164,11 +158,8 @@ public class QuestionController {
             questionResponseDTO.setAnswer(questionDTO.getAnswer());
             questionResponseDTO.setUserId(questionDTO.getUserId());
             questionResponseDTO.setTags(
-                    questionTagsMappings.stream()
-                            .map(mapping -> {
-                                Tag tag = tagService.getTagById(mapping.getTagId());
-                                return new TagResponseDTO(tag.getId(), tag.getName());
-                            })
+                    questionTagsMappingService.listQuestionTagsMappingsByQuestionId(id).stream()
+                            .map(mapping -> tagService.getTagById(mapping.getTagId()))
                             .collect(Collectors.toList()));
             return new BaseResponse<>(ResponseCode.SUCCESS, questionResponseDTO);
         } catch (RuntimeException e) {
@@ -193,10 +184,7 @@ public class QuestionController {
         questionResponseDTO.setUserId(String.valueOf(question.getUserId()));
         questionResponseDTO.setTags(
                 questionTagsMappingService.listQuestionTagsMappingsByQuestionId(Long.valueOf(id)).stream()
-                        .map(mapping -> {
-                            Tag tag = tagService.getTagById(mapping.getTagId());
-                            return new TagResponseDTO(tag.getId(), tag.getName());
-                        })
+                        .map(mapping -> tagService.getTagById(mapping.getTagId()))
                         .collect(Collectors.toList()));
         log.info("QuestionController.getQuestion success: {}", questionResponseDTO);
         return new BaseResponse<>(ResponseCode.SUCCESS, questionResponseDTO);
@@ -217,10 +205,7 @@ public class QuestionController {
                     questionResponseDTO.setUserId(String.valueOf(question.getUserId()));
                     questionResponseDTO.setTags(
                             questionTagsMappingService.listQuestionTagsMappingsByQuestionId(question.getId()).stream()
-                                    .map(mapping -> {
-                                        Tag tag = tagService.getTagById(mapping.getTagId());
-                                        return new TagResponseDTO(tag.getId(), tag.getName());
-                                    })
+                                    .map(mapping -> tagService.getTagById(mapping.getTagId()))
                                     .collect(Collectors.toList()));
                     return questionResponseDTO;
                 })
