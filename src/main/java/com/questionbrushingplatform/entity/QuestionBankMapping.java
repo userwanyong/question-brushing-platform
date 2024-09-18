@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -14,6 +16,7 @@ import lombok.Data;
  */
 @TableName(value ="question_bank_mapping")
 @Data
+@Builder
 public class QuestionBankMapping implements Serializable {
     /**
      * 
@@ -34,7 +37,7 @@ public class QuestionBankMapping implements Serializable {
     /**
      * 
      */
-    private Date createdTiam;
+    private Date createdTime;
 
     /**
      * 

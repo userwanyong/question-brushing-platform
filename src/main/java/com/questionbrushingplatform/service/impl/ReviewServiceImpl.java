@@ -19,6 +19,14 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
     implements ReviewService{
 
     @Override
+    public void addReview(Review review) {
+        boolean res = save(review);
+        if (!res) {
+            throw new RuntimeException("添加审核记录失败");
+        }
+    }
+
+    @Override
     public List<Review> getReviewQuestionList() {
         return list();
     }

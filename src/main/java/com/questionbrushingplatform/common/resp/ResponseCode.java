@@ -23,7 +23,11 @@ public enum ResponseCode implements BaseExceptionInterface {
     HTTP_ERROR(1001,"HTTP请求错误"),
     RPC_ERROR(1001,"RPC调用错误"),
     NO_DATA(1001,"没有数据"),
-    REDIS_FAIL(1002,"redis链接失败");
+    REDIS_FAIL(1002,"redis链接失败"),
+    ALREADY_EXIST(1003,"数据已存在"),
+    PARAM_NOT_EXIST(1004,"参数不存在"),
+    ;
+
 
     private final int code;
 

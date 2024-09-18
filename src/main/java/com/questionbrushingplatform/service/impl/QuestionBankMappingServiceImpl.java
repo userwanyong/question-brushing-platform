@@ -24,6 +24,21 @@ public class QuestionBankMappingServiceImpl extends ServiceImpl<QuestionBankMapp
         queryWrapper.eq("bank_id", bankId);
         return list(queryWrapper);
     }
+
+    /**
+     * 根据题目id和银行id获取题目银行映射
+     * @param questionId
+     * @param bankId
+     * @return
+     */
+    public QuestionBankMapping getQuestionBankMappingById(Long questionId, Long bankId) {
+        //构建查询条件
+        QueryWrapper<QuestionBankMapping> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("question_id", questionId);
+        queryWrapper.eq("bank_id", bankId);
+        //执行查询并返回
+        return getOne(queryWrapper);
+    }
 }
 
 

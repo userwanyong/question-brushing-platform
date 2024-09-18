@@ -1,24 +1,35 @@
 package com.questionbrushingplatform.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.questionbrushingplatform.common.constant.MessageConstant;
+import com.questionbrushingplatform.common.constant.PasswordConstant;
+import com.questionbrushingplatform.common.constant.RedisConstant;
+import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
-import com.questionbrushingplatform.pojo.dto.PageDTO;
-import com.questionbrushingplatform.pojo.dto.UserAddDTO;
-import com.questionbrushingplatform.pojo.dto.UserDTO;
-import com.questionbrushingplatform.pojo.dto.UserUpdatePasswordDTO;
+import com.questionbrushingplatform.dto.request.PageDTO;
+import com.questionbrushingplatform.dto.request.UserAddRequestDTO;
+import com.questionbrushingplatform.dto.request.UserRequestDTO;
+import com.questionbrushingplatform.dto.request.UserUpdatePasswordRequestDTO;
+import com.questionbrushingplatform.dto.response.UserResponseDTO;
+
 import com.questionbrushingplatform.entity.User;
 import com.questionbrushingplatform.pojo.query.UserQuery;
-import com.questionbrushingplatform.pojo.vo.UserVO;
 import com.questionbrushingplatform.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBitSet;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 /**
@@ -32,93 +43,30 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private RedissonClient redissonClient;
 
 
-    /**
-     * 新增用户
-     * @param userAddDTO
-     * @return
-     */
-    @PostMapping("/add")
-    @ApiOperation("新增用户")
-    public BaseResponse<Boolean> add(@RequestBody UserAddDTO userAddDTO) {
-        userService.add(userAddDTO);
-        return new BaseResponse<>(ResponseCode.SUCCESS);
-    }
-
-    /**
-     * 单个删除用户
-     * @param id
-     * @return
-     */
-    @DeleteMapping("/deleteById/{id}")
-    @ApiOperation("单个删除用户")
-    public BaseResponse<Boolean> deleteById(@PathVariable Long id) {
-        //判断是否为管理员
-//        userService.isAdmin();
-        //不能重复删除
-        if (userService.getById(id) == null) {
-            log.error("UserController.deleteById error: the user not exist which is {}", id);
-            return new BaseResponse<>(ResponseCode.NO_DATA);
-        }
-//        userService.updateTimeById(id);
-        userService.removeById(id);
-        return new BaseResponse<>(ResponseCode.SUCCESS);
-    }
-
-    /**
-     * 批量删除用户
-     * @param ids
-     * @return
-     */
-    @DeleteMapping("/deleteByIds")
-    @ApiOperation("批量删除用户")
-    public BaseResponse<Boolean> deleteByIds(@RequestBody List<Long> ids) {
-        //判断是否为管理员
-//        userService.isAdmin();
-        for (Long id : ids) {
-            //不能重复删除
-            if (userService.getById(id) == null) {
-                log.error("UserController.deleteById error: the user not exist which is {}", id);
-                return new BaseResponse<>(ResponseCode.NO_DATA);
-            }
-//            userService.updateTimeById(id);
-        }
-        userService.removeByIds(ids);
-        return new BaseResponse<>(ResponseCode.SUCCESS);
-    }
-
-    /**
-     * 修改用户信息
-     * @param userDTO
-     * @return
-     */
-    @PutMapping("/update")
-    @ApiOperation("修改用户信息")
-    public BaseResponse<UserDTO> update(@RequestBody UserDTO userDTO) {
-        //判断是否为管理员
-//        userService.isAdmin();
-        User user = new User();
-        BeanUtils.copyProperties(userDTO,user);
-//        user.setUpdateTime(LocalDateTime.now());
-        userService.updateById(user);
-        return new BaseResponse<>(ResponseCode.SUCCESS);
-    }
 
     /**
      * 修改当前用户信息
      * @param userDTO
      * @return
      */
-    @PutMapping("/updateCurrentInfo")
+    @PutMapping("/update")
     @ApiOperation("修改当前用户信息")
-    public BaseResponse<UserDTO> updateCurrentInfo(@RequestBody UserDTO userDTO) {
-        User user = new User();
-        BeanUtils.copyProperties(userDTO,user);
-        user.setId(StpUtil.getLoginIdAsLong());
-//        user.setUpdateTime(LocalDateTime.now());
-        userService.updateById(user);
-        return new BaseResponse<>(ResponseCode.SUCCESS);
+    public BaseResponse<UserResponseDTO> updateInfo(@RequestBody UserRequestDTO userDTO) {
+        try {
+            User user = new User();
+            BeanUtils.copyProperties(userDTO,user);
+            user.setId(StpUtil.getLoginIdAsLong());
+            userService.updateUser(user);
+            log.info("UserController.updateCurrentInfo success: {}", user);
+            return new BaseResponse<>(ResponseCode.SUCCESS);
+        }catch (Exception e){
+            log.error("UserController.updateCurrentInfo error: {}", e.getMessage());
+            return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
+        }
     }
 
     /**
@@ -128,57 +76,58 @@ public class UserController {
      */
     @PutMapping("/updatePassword")
     @ApiOperation("修改当前登录用户密码")
-    public BaseResponse<UserUpdatePasswordDTO> updatePassword(@RequestBody UserUpdatePasswordDTO userUpdatePasswordDTO) {
-        userService.updatePassword(userUpdatePasswordDTO);
-        return new BaseResponse<>(ResponseCode.SUCCESS);
+    public BaseResponse<UserUpdatePasswordRequestDTO> updatePassword(@RequestBody UserUpdatePasswordRequestDTO userUpdatePasswordDTO) {
+        try {
+            //要保证密码长度符合规定
+            if (userUpdatePasswordDTO.getNewPassword().length() < 6 || userUpdatePasswordDTO.getNewPassword().length() > 16){
+                log.error("UserController.updatePassword error: the newPassword length not allowed which is {}", userUpdatePasswordDTO.getNewPassword());
+                throw new BaseException(MessageConstant.ERROR_DATABASE);
+            }
+            if (userUpdatePasswordDTO.getOldPassword().length() < 6 || userUpdatePasswordDTO.getOldPassword().length() > 16){
+                log.error("UserController.updatePassword error: the oldPassword length not allowed which is {}", userUpdatePasswordDTO.getOldPassword());
+                throw new BaseException(MessageConstant.ERROR_DATABASE);
+            }
+            if (userUpdatePasswordDTO.getConfirmPassword().length() < 6 || userUpdatePasswordDTO.getConfirmPassword().length() > 16){
+                log.error("UserController.updatePassword error: the confirmPassword length not allowed which is {}", userUpdatePasswordDTO.getConfirmPassword());
+                throw new BaseException(MessageConstant.ERROR_DATABASE);
+            }
+            Long currentId = StpUtil.getLoginIdAsLong();
+            User user = userService.getUserById(currentId);
+            if (!user.getPassword().equals(userUpdatePasswordDTO.getOldPassword())){
+                log.error("UserController.updatePassword error: the oldPassword is not correct which is {}", userUpdatePasswordDTO.getOldPassword());
+                throw new BaseException(MessageConstant.OLD_PASSWORD_ERROR);
+            }
+            if (!userUpdatePasswordDTO.getNewPassword().equals(userUpdatePasswordDTO.getConfirmPassword())){
+                log.error("UserController.updatePassword error: the newPassword and confirmPassword is not same which is {}", userUpdatePasswordDTO.getNewPassword());
+                throw new BaseException(MessageConstant.CONFIRM_PASSWORD_ERROR);
+            }
+            user.setPassword(userUpdatePasswordDTO.getNewPassword());
+            userService.updateUser(user);
+            log.info("UserController.updatePassword success: updatePassword success which is {}", userUpdatePasswordDTO.getNewPassword());
+            return new BaseResponse<>(ResponseCode.SUCCESS);
+        }catch (Exception e){
+            log.error("UserController.updatePassword error: {}", e.getMessage());
+            return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
+        }
     }
 
-    /**
-     * 根据id查询用户
-     * @param id
-     * @return
-     */
-    @GetMapping("/getById/{id}")
-    @ApiOperation("根据id查询用户")
-    public BaseResponse<User> getById(@PathVariable Long id) {
-        //判断是否为管理员
-//        userService.isAdmin();
-        User user = userService.getById(id);
-        if (user == null) {
-            log.error("UserController.getById error: the user not exist which is {}", id);
-            return new BaseResponse<>(ResponseCode.NO_DATA);
-        }
-        return new BaseResponse<>(ResponseCode.SUCCESS,user);
-    }
 
     /**
      * 获取当前用户信息
      * @return
      */
-    @GetMapping("/getCurrentUser")
+    @GetMapping("/get")
     @ApiOperation("获取当前用户信息")
-    public BaseResponse<User> getCurrentUser() {
-        User user = userService.getById((Serializable) StpUtil.getLoginId());
+    public BaseResponse<UserResponseDTO> get() {
+        User user = userService.getUserById(StpUtil.getLoginIdAsLong());
         if (user == null) {
             log.error("UserController.getCurrentUser error: the user not exist which is {}", StpUtil.getLoginId());
             return new BaseResponse<>(ResponseCode.NO_DATA);
         }
-        return new BaseResponse<>(ResponseCode.SUCCESS,user);
-    }
-
-
-    /**
-     * 分页查询用户
-     * @param userQuery
-     * @return
-     */
-    @GetMapping("/selectByPage")
-    @ApiOperation("分页查询用户")
-    public PageDTO<UserVO> selectByPage(UserQuery userQuery) {
-        //判断是否为管理员
-//        userService.isAdmin();
-        PageDTO<UserVO> page=userService.selectByPage(userQuery);
-        return page;
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        BeanUtils.copyProperties(user,userResponseDTO);
+        log.info("UserController.getCurrentUser success: {}", user);
+        return new BaseResponse<>(ResponseCode.SUCCESS,userResponseDTO);
     }
 
 
@@ -189,13 +138,34 @@ public class UserController {
     @PostMapping("/addSignIn")
     @ApiOperation("添加用户签到记录")
     public BaseResponse<Boolean> addSignIn() {
-        //必须登录才能签到
-        if (!StpUtil.isLogin()) {
-            log.error("UserController.addSignIn error: the user not login");
-            return new BaseResponse<>(ResponseCode.NO_LOGIN);
+        try {
+            //必须登录才能签到
+            if (!StpUtil.isLogin()) {
+                log.error("UserController.addSignIn error: the user not login");
+                return new BaseResponse<>(ResponseCode.NO_LOGIN);
+            }
+            LocalDate date = LocalDate.now();
+            String key = RedisConstant.getUserSignInRedisKey(date.getYear(), StpUtil.getLoginIdAsLong());
+
+            //查询Redis的BitMap
+            RBitSet bitSet = redissonClient.getBitSet(key);
+            //获取当前如期是一年中的第几天，作为偏移量（从1开始计数）
+            int offset = date.getDayOfYear();
+            //查询当天是否签到
+            if (!bitSet.get(offset)){
+                //如果当天未签到，则签到
+                bitSet.set(offset, true);
+                //设置过期时间为下一年的第一天
+//            bitSet.expire(LocalDate.ofYearDay(date.getYear()+1,1).toEpochDay(), TimeUnit.SECONDS);
+//            bitSet.expire(6, TimeUnit.DAYS);
+            }
+            //当天已签到
+            log.info("UserController.addSignIn success: add userSignIn success which is {}", StpUtil.getLoginIdAsLong());
+            return new BaseResponse<>(ResponseCode.SUCCESS);
+        }catch (Exception e){
+            log.error("UserController.addSignIn error: {}", e.getMessage());
+            return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
         }
-        boolean result = userService.addUserSignIn(StpUtil.getLoginIdAsLong());
-        return new BaseResponse<>(result ? ResponseCode.SUCCESS : ResponseCode.SYSTEM_ERROR);
     }
 
     /**
@@ -211,8 +181,26 @@ public class UserController {
             log.error("UserController.getSignInRecord error: the user not login");
             return new BaseResponse<>(ResponseCode.NO_LOGIN);
         }
-        List<Integer> userSignInRecord = userService.getUserSignInRecord(StpUtil.getLoginIdAsLong(), year);
-        return new BaseResponse<>(ResponseCode.SUCCESS, userSignInRecord);
+        if (year == null){
+            LocalDate date = LocalDate.now();
+            year = date.getYear();
+        }
+        String key = RedisConstant.getUserSignInRedisKey(year, StpUtil.getLoginIdAsLong());
+        //查询Redis的BitMap
+        RBitSet bitSet = redissonClient.getBitSet(key);
+        //加载BitSet到内存中，避免后续读取时发送多次请求
+        BitSet newBitSet = bitSet.asBitSet();
+        //统计签到的日期
+        ArrayList<Integer> list = new ArrayList<>();
+        //从索引0开始查找下一个被设置为1的位
+        int index = newBitSet.nextSetBit(0);
+        while (index >= 0){
+            list.add(index);
+            //从下一位开始继续查找被设为1的位
+            index = newBitSet.nextSetBit(index + 1);
+        }
+        log.info("UserController.getUserSignInRecord success: getUserSignInRecord success which is {}", list);
+        return new BaseResponse<>(ResponseCode.SUCCESS, list);
     }
 
 }

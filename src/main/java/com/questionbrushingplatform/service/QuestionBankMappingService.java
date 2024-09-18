@@ -13,4 +13,12 @@ import java.util.List;
 public interface QuestionBankMappingService extends IService<QuestionBankMapping> {
 
     List<QuestionBankMapping> listByBankId(Long bankId);
+
+    /**
+     * 通过题目id和题库id获取题目题库映射
+     * @param questionId
+     * @param bankId
+     * @return
+     */
+    QuestionBankMapping getQuestionBankMappingById(Long questionId, Long bankId);
 }

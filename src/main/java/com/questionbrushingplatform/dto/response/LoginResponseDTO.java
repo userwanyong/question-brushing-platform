@@ -39,10 +39,6 @@ public class LoginResponseDTO {
     @JsonProperty("user_role")
     private String userRole;
 
-    @JsonProperty("edit_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime editTime;
-
     @JsonProperty("created_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime;

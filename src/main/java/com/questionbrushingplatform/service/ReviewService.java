@@ -13,6 +13,8 @@ import java.util.List;
 */
 public interface ReviewService extends IService<Review> {
 
+    void addReview(Review review);
+
     List<Review> getReviewQuestionList();
 
 }

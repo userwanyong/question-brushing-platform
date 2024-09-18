@@ -1,5 +1,6 @@
 package com.questionbrushingplatform.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.questionbrushingplatform.dto.response.QuestionResponseDTO;
 import com.questionbrushingplatform.entity.Question;
 import lombok.AllArgsConstructor;
@@ -27,11 +28,13 @@ public class ReviewRequestDTO implements Serializable {
     /**
      * 审核人
      */
+    @JsonProperty("reviewer_id")
     private String reviewerId;
 
     /**
      * 审核信息
      */
+    @JsonProperty("review_msg")
     private String reviewMsg;
 
     /**

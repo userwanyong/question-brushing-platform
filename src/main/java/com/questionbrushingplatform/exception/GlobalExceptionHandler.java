@@ -1,4 +1,4 @@
-package com.questionbrushingplatform.handler;
+package com.questionbrushingplatform.exception;
 
 
 import cn.dev33.satoken.util.SaResult;

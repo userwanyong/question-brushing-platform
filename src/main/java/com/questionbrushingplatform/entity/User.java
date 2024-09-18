@@ -29,14 +29,14 @@ public class User implements Serializable {
     @TableId(value = "id",type = IdType.ASSIGN_ID)
     private Long id;
 
-    @TableField("user_account")
-    private String userAccount;
+    @TableField("username")
+    private String username;
 
-    @TableField("user_password")
-    private String userPassword;
+    @TableField("password")
+    private String password;
 
-    @TableField("user_name")
-    private String userName;
+    @TableField("nickname")
+    private String nickname;
 
     @TableField("user_avatar")
     private String userAvatar;
@@ -47,14 +47,11 @@ public class User implements Serializable {
     @TableField("user_role")
     private String userRole;
 
-    @TableField("edit_time")
-    private Date editTime;
-
     @TableField("created_time")
-    private Date createdTime;
+    private LocalDateTime createdTime;
 
-    @TableField("update_time")
-    private Date updateTime;
+    @TableField("updated_time")
+    private LocalDateTime updatedTime;
 
     @TableField("is_delete")
     private Integer isDelete;
