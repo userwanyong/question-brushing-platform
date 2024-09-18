@@ -2,29 +2,21 @@ package com.questionbrushingplatform.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.questionbrushingplatform.common.constant.MessageConstant;
 import com.questionbrushingplatform.common.exception.BaseException;
-import com.questionbrushingplatform.dto.request.PageDTO;
-import com.questionbrushingplatform.dto.request.QuestionBankAddRequestDTO;
-import com.questionbrushingplatform.dto.response.QuestionBankResponseDTO;
-import com.questionbrushingplatform.entity.QuestionBank;
 import com.questionbrushingplatform.mapper.QuestionBankMapper;
-import com.questionbrushingplatform.mapper.QuestionMapper;
-
+import com.questionbrushingplatform.pojo.dto.PageDTO;
+import com.questionbrushingplatform.pojo.dto.QuestionBankAddDTO;
+import com.questionbrushingplatform.entity.QuestionBank;
 import com.questionbrushingplatform.pojo.query.QuestionBankQuery;
-
+import com.questionbrushingplatform.pojo.vo.QuestionBankVO;
 import com.questionbrushingplatform.service.QuestionBankService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 /**
  * @author 永
@@ -66,7 +58,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
      * 新增题库
      * @param questionBankAddDTO
      */
-    public void add(QuestionBankAddRequestDTO questionBankAddDTO) {
+    public void add(QuestionBankAddDTO questionBankAddDTO) {
         //必须要有题库名
         if (questionBankAddDTO.getTitle() == null|| questionBankAddDTO.getTitle().isEmpty()) {
             log.error("QuestionBankServiceImpl.add error: the title is bank witch is {}", questionBankAddDTO.getTitle());
@@ -143,7 +135,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
      * @param questionBankQuery
      * @return
      */
-    public PageDTO<QuestionBankResponseDTO> selectByPage(QuestionBankQuery questionBankQuery) {
+    public PageDTO<QuestionBankVO> selectByPage(QuestionBankQuery questionBankQuery) {
         // 1.构建基础查询条件
         Page<QuestionBank> page = questionBankQuery.toMpPage("created_time", false);
         // 2.分页查询
@@ -151,12 +143,12 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 .like(questionBankQuery.getTitle()!=null,QuestionBank::getTitle,questionBankQuery.getTitle())
                 .eq(questionBankQuery.getUserId()!=null,QuestionBank::getUserId,questionBankQuery.getUserId())
                 .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getCreatedTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
-                .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getUpdatedTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
+                .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getUpdateTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
                 .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getEditTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
                 .page(page);
         log.info("QuestionBankServiceImpl.selectByPage success: selectByPage success which is {}", p);
         // 3.封装VO结果
-        return PageDTO.of(p, QuestionBankResponseDTO.class);
+        return PageDTO.of(p, QuestionBankVO.class);
     }
 
 }

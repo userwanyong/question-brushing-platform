@@ -6,12 +6,10 @@ import com.questionbrushingplatform.common.constant.MessageConstant;
 import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
-
-import com.questionbrushingplatform.dto.request.LoginAndRegisterRequestDTO;
-import com.questionbrushingplatform.dto.request.UserAddRequestDTO;
-import com.questionbrushingplatform.dto.response.LoginResponseDTO;
+import com.questionbrushingplatform.pojo.dto.LoginAndRegisterDTO;
+import com.questionbrushingplatform.pojo.dto.UserAddDTO;
 import com.questionbrushingplatform.entity.User;
-
+import com.questionbrushingplatform.pojo.vo.LoginVO;
 import com.questionbrushingplatform.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,22 +43,22 @@ public class AuthController {
      */
     @PostMapping("/login")
     @ApiOperation(value = "登录")
-    public BaseResponse<LoginResponseDTO> login(@RequestBody LoginAndRegisterRequestDTO loginAndRegisterDTO) {
+    public BaseResponse<LoginVO> login(@RequestBody LoginAndRegisterDTO loginAndRegisterDTO) {
 
         User user=userService.login(loginAndRegisterDTO);
         StpUtil.login(user.getId());
 
-        LoginResponseDTO loginVO = LoginResponseDTO.builder()
+        LoginVO loginVO = LoginVO.builder()
                 .id(user.getId())
-                .username(user.getUsername())
+                .userAccount(user.getUserAccount())
                 .userAvatar(user.getUserAvatar())
-                .nickname(user.getNickname())
+                .userName(user.getUserName())
                 .userProfile(user.getUserProfile())
                 .userRole(user.getUserRole())
-                .password(StrUtil.hide(user.getPassword(), 1, 3))
+                .userPassword(StrUtil.hide(user.getUserPassword(), 1, 3))
                 .createdTime(user.getCreatedTime())
                 .editTime(user.getEditTime())
-                .updatedTime(user.getUpdatedTime())
+                .updateTime(user.getUpdateTime())
                 .build();
 
         return new BaseResponse<>(ResponseCode.SUCCESS,loginVO);
@@ -74,13 +72,13 @@ public class AuthController {
      */
     @PostMapping("/register")
     @ApiOperation(value = "注册")
-    public BaseResponse<String> register(@RequestBody LoginAndRegisterRequestDTO loginAndRegisterDTO) {
+    public BaseResponse<String> register(@RequestBody LoginAndRegisterDTO loginAndRegisterDTO) {
         //检查一下是否填写了账号和密码
-        if (StrUtil.isBlank(loginAndRegisterDTO.getUsername())||StrUtil.isBlank(loginAndRegisterDTO.getPassword())){
-            log.error("UserController.register error: the username or password is empty which is {}", loginAndRegisterDTO);
+        if (StrUtil.isBlank(loginAndRegisterDTO.getUserAccount())||StrUtil.isBlank(loginAndRegisterDTO.getUserPassword())){
+            log.error("UserController.register error: the userAccount or userPassword is empty which is {}", loginAndRegisterDTO);
             throw new BaseException(MessageConstant.ERROR_ACCOUNT_AND_PASSWORD);
         }
-        UserAddRequestDTO userAddDTO = new UserAddRequestDTO();
+        UserAddDTO userAddDTO = new UserAddDTO();
         BeanUtils.copyProperties(loginAndRegisterDTO, userAddDTO);
         userService.add(userAddDTO);
         return new BaseResponse<>(ResponseCode.SUCCESS);

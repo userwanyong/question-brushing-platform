@@ -1,6 +1,5 @@
 package com.questionbrushingplatform.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,9 +43,8 @@ public class QuestionResponseDTO implements Serializable {
     private String answer;
 
     /**
-     * 问题解析
+     * 提交人
      */
-    @JsonProperty("user_id")
     private String userId;
 
     /**

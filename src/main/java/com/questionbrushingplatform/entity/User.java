@@ -1,15 +1,17 @@
 package com.questionbrushingplatform.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author 永
@@ -21,50 +23,40 @@ import java.time.LocalDateTime;
 @TableName("user")
 public class User implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id",type = IdType.ASSIGN_ID)
     private Long id;
 
-    @TableField("username")
-    private String username;
+    @TableField("user_account")
+    private String userAccount;
 
-    @TableField("password")
-    private String password;
+    @TableField("user_password")
+    private String userPassword;
 
-    @TableField("nickname")
-    private String nickname;
+    @TableField("user_name")
+    private String userName;
 
     @TableField("user_avatar")
-    @JsonProperty("user_avatar")
     private String userAvatar;
 
     @TableField("user_profile")
-    @JsonProperty("user_profile")
     private String userProfile;
 
     @TableField("user_role")
-    @JsonProperty("user_role")
     private String userRole;
 
     @TableField("edit_time")
-    @JsonProperty("edit_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime editTime;
+    private Date editTime;
 
     @TableField("created_time")
-    @JsonProperty("created_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdTime;
+    private Date createdTime;
 
-    @TableField("updated_time")
-    @JsonProperty("updated_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updatedTime;
+    @TableField("update_time")
+    private Date updateTime;
 
     @TableField("is_delete")
-    @JsonProperty("is_delete")
-    @TableLogic
     private Integer isDelete;
 
 }

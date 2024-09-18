@@ -34,6 +34,8 @@ import java.util.stream.Collectors;
 @Api(tags = "题目接口")
 public class QuestionController {
 
+    private static final Integer TOREVIEW = 0;
+
     private final QuestionService questionService;
 
     private final QuestionTagsMappingService questionTagsMappingService;
@@ -117,6 +119,7 @@ public class QuestionController {
             question.setContent(questionDTO.getContent());
             question.setAnswer(questionDTO.getAnswer());
             question.setUserId(Long.valueOf(questionDTO.getUserId()));
+            question.setStatus(TOREVIEW);
             questionService.updateQuestion(question);
 
             // update the tags
