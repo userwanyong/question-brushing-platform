@@ -159,6 +159,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         log.info("UserServiceImpl.updatePassword success: updatePassword success which is {}", userUpdatePasswordDTO.getNewPassword());
     }
 
+    @Override
+    public User getUserById(Long id) {
+        return getById(id);
+    }
+
 
     /**
      * 分页查询用户

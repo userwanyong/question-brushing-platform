@@ -43,7 +43,7 @@ public class QuestionResponseDTO implements Serializable {
     private String answer;
 
     /**
-     * 问题解析
+     * 提交人
      */
     private String userId;
 

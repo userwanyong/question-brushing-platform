@@ -34,6 +34,8 @@ public interface UserService extends IService<User> {
      */
 //    void updateTimeById(Long id);
 
+    User getUserById(Long id);
+
     /**
      * 分页查询用户
      * @param userQuery
