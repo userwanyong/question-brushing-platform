@@ -1,5 +1,6 @@
 package com.questionbrushingplatform.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class QuestionRequestDTO implements Serializable {
 
     private String answer;
 
+    @JsonProperty("user_id")
     private String userId;
 
     private List<Integer> tags;

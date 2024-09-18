@@ -44,7 +44,7 @@ public class QuestionEsRequestDTO implements Serializable {
     private LocalDateTime createdTime;
 
     @Field(type= FieldType.Date,format = {},pattern = DATE_TIME_PATTERN)
-    private LocalDateTime updateTime;
+    private LocalDateTime updatedTime;
 
     @Field(type= FieldType.Date,format = {},pattern = DATE_TIME_PATTERN)
     private LocalDateTime editTime;

@@ -21,7 +21,7 @@ public interface QuestionMapper extends BaseMapper<Question> {
      * @param minUpdateTime
      * @return
      */
-    @Select("select * from question where update_time >= #{minUpdateTime}")
+    @Select("select * from question where updated_time >= #{minUpdateTime}")
     List<Question> listQuestionWithDelete(Date minUpdateTime);
 }
 

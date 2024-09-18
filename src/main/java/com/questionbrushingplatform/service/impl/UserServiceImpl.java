@@ -153,7 +153,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BaseException(MessageConstant.CONFIRM_PASSWORD_ERROR);
         }
         user.setPassword(userUpdatePasswordDTO.getNewPassword());
-        user.setUpdateTime(LocalDateTime.now());
+        user.setUpdatedTime(LocalDateTime.now());
 //        updateTimeById(currentId);
         userMapper.updateById(user);
         log.info("UserServiceImpl.updatePassword success: updatePassword success which is {}", userUpdatePasswordDTO.getNewPassword());
@@ -174,7 +174,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .like(userQuery.getNickname()!=null,User::getNickname,userQuery.getNickname())
                 .eq(userQuery.getUserRole()!=null,User::getUserRole,userQuery.getUserRole())
                 .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getCreatedTime,userQuery.getStartTime(),userQuery.getEndTime())
-                .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getUpdateTime,userQuery.getStartTime(),userQuery.getEndTime())
+                .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getUpdatedTime,userQuery.getStartTime(),userQuery.getEndTime())
                 .between(userQuery.getStartTime()!=null&&userQuery.getEndTime()!=null,User::getEditTime,userQuery.getStartTime(),userQuery.getEndTime())
                 .page(page);
         // 3.封装VO结果

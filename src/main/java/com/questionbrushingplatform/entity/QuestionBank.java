@@ -49,10 +49,10 @@ public class QuestionBank implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime;
 
-    @TableField("update_time")
-    @JsonProperty("update_time")
+    @TableField("updated_time")
+    @JsonProperty("updated_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updateTime;
+    private LocalDateTime updatedTime;
 
     @TableField("is_delete")
     @JsonProperty("is_delete")

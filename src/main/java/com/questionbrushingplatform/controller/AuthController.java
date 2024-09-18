@@ -60,7 +60,7 @@ public class AuthController {
                 .password(StrUtil.hide(user.getPassword(), 1, 3))
                 .createdTime(user.getCreatedTime())
                 .editTime(user.getEditTime())
-                .updateTime(user.getUpdateTime())
+                .updatedTime(user.getUpdatedTime())
                 .build();
 
         return new BaseResponse<>(ResponseCode.SUCCESS,loginVO);

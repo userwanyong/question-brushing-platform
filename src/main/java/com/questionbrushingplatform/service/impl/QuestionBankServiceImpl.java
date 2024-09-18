@@ -151,7 +151,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 .like(questionBankQuery.getTitle()!=null,QuestionBank::getTitle,questionBankQuery.getTitle())
                 .eq(questionBankQuery.getUserId()!=null,QuestionBank::getUserId,questionBankQuery.getUserId())
                 .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getCreatedTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
-                .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getUpdateTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
+                .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getUpdatedTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
                 .between(questionBankQuery.getStartTime()!=null&&questionBankQuery.getEndTime()!=null,QuestionBank::getEditTime,questionBankQuery.getStartTime(),questionBankQuery.getEndTime())
                 .page(page);
         log.info("QuestionBankServiceImpl.selectByPage success: selectByPage success which is {}", p);

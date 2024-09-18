@@ -47,9 +47,9 @@ public class UserResponseDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime;
 
-    @JsonProperty("update_time")
+    @JsonProperty("updated_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updateTime;
+    private LocalDateTime updatedTime;
 
 
 }

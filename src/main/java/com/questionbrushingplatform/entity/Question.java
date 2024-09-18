@@ -60,8 +60,8 @@ public class Question implements Serializable {
     /**
      * 更新时间
      */
-    @JsonProperty("update_time")
-    private Date updateTime;
+    @JsonProperty("updated_time")
+    private Date updatedTime;
 
     /**
      * 是否删除
