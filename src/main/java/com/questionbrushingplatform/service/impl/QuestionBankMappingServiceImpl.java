@@ -1,5 +1,6 @@
 package com.questionbrushingplatform.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.questionbrushingplatform.entity.QuestionBankMapping;
@@ -26,6 +27,17 @@ public class QuestionBankMappingServiceImpl extends ServiceImpl<QuestionBankMapp
     }
 
     /**
+     * 根据题库 id 获取题目总数
+     * @param ids
+     * @return
+     */
+    public Long listByBankIds(Long[] ids) {
+        LambdaQueryWrapper<QuestionBankMapping> queryWrapperQuestion = new LambdaQueryWrapper<>();
+        queryWrapperQuestion.in(QuestionBankMapping::getBankId, ids);
+        return count(queryWrapperQuestion);
+    }
+
+    /**
      * 根据题目id和银行id获取题目银行映射
      * @param questionId
      * @param bankId
@@ -39,6 +51,8 @@ public class QuestionBankMappingServiceImpl extends ServiceImpl<QuestionBankMapp
         //执行查询并返回
         return getOne(queryWrapper);
     }
+
+
 }
 
 

@@ -26,6 +26,8 @@ public enum ResponseCode implements BaseExceptionInterface {
     REDIS_FAIL(1002,"redis链接失败"),
     ALREADY_EXIST(1003,"数据已存在"),
     PARAM_NOT_EXIST(1004,"参数不存在"),
+    ALREADY_EXIST_MESSAGE (1005,"数据已存在"),
+    QUESTION_BANK_NOT_EMPTY(1006,"该题库中存在题目，无法删除")
     ;
 
 

@@ -1,15 +1,17 @@
 package com.questionbrushingplatform.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.questionbrushingplatform.common.constant.MessageConstant;
 import com.questionbrushingplatform.common.constant.PasswordConstant;
 import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
+import com.questionbrushingplatform.dto.request.QuestionBankAddRequestDTO;
 import com.questionbrushingplatform.dto.request.ReviewRequestDTO;
 import com.questionbrushingplatform.dto.request.UserAddRequestDTO;
 import com.questionbrushingplatform.dto.request.UserRequestDTO;
+import com.questionbrushingplatform.dto.response.QuestionBankResponseDTO;
 import com.questionbrushingplatform.dto.response.UserResponseDTO;
 import com.questionbrushingplatform.entity.*;
 import com.questionbrushingplatform.service.*;
@@ -58,6 +60,7 @@ public class AdminController {
      * @return
      */
     @GetMapping("/review/question/list")
+    @ApiOperation("获取待审核问题列表")
     public BaseResponse<List<Question>> getReviewQuestionList() {
         try {
             List<Question> questions = reviewService.getReviewQuestionList().stream()
@@ -76,6 +79,7 @@ public class AdminController {
      * @return
      */
     @GetMapping("/review/question/{id}")
+    @ApiOperation("根据id获取待审核问题")
     public BaseResponse<Question> getReviewQuestion(@PathVariable Long id) {
         try {
             Question question = questionService.getQuestionById(id);
@@ -92,6 +96,7 @@ public class AdminController {
      * @return
      */
     @PostMapping("/review/question/{id}/pass")
+    @ApiOperation("通过审核问题")
     public BaseResponse<Void> passReviewQuestion(@PathVariable Long id, @RequestBody ReviewRequestDTO reviewRequestDTO) {
         try {
             Question question = new Question();
@@ -150,6 +155,7 @@ public class AdminController {
      * @return
      */
     @PostMapping("/review/question/{id}/fail")
+    @ApiOperation("驳回审核问题")
     public BaseResponse<Void> failReviewQuestion(@PathVariable Long id, @RequestBody ReviewRequestDTO reviewRequestDTO) {
         try {
             Review review = new Review();
@@ -193,6 +199,7 @@ public class AdminController {
      * @return
      */
     @PostMapping("/question/add/{questionId}/{bankId}")
+    @ApiOperation("新增题目到题库")
     public BaseResponse<Void> addQuestionBankMapping(@PathVariable Long questionId,@PathVariable Long bankId) {
         //判断该题库id与题目id是否存在
         if (questionService.getQuestionById(questionId)==null || questionBankService.getQuestionBankById(bankId)==null) {
@@ -226,16 +233,16 @@ public class AdminController {
     public BaseResponse<UserResponseDTO> addUser(@RequestBody UserAddRequestDTO userAddDTO) {
         try {//限制账号长度为11位
             if (userAddDTO.getUsername().length() != 11){
-                log.error("UserController.add error: the userAccount length not allowed which is {}", userAddDTO.getUsername());
-                throw new BaseException(MessageConstant.ACCOUNT_NOT_ALLOWED);
+                log.error("AdminController.add error: the userAccount length not allowed which is {}", userAddDTO.getUsername());
+                return new BaseResponse<>(ResponseCode.PARAMETER_ERROR);
             }
             //先判断数据库是否有该账号，如果有，则不新增
             LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(User::getUsername, userAddDTO.getUsername());
             User dbUser = userService.getByUsername(queryWrapper);
             if (dbUser != null){
-                log.error("UserController.add error: the userAccount already exists which is {}", userAddDTO.getUsername());
-                throw new BaseException(MessageConstant.ACCOUNT_EXISTS);
+                log.error("AdminController.add error: the userAccount already exists which is {}", userAddDTO.getUsername());
+                return new BaseResponse<>(ResponseCode.ALREADY_EXIST);
             }
             //如果不存在，则新增
             if (userAddDTO.getUserRole()==null|| userAddDTO.getUserRole().isEmpty()){
@@ -247,8 +254,8 @@ public class AdminController {
             }
             //限制密码长度在6-16位
             else if (userAddDTO.getPassword().length() < 6 || userAddDTO.getPassword().length() > 16){
-                log.error("UserController.add error: the userPassword length not allowed which is {}", userAddDTO.getPassword());
-                throw new BaseException(MessageConstant.ERROR_ACCOUNT_AND_PASSWORD);
+                log.error("AdminController.add error: the userPassword length not allowed which is {}", userAddDTO.getPassword());
+                return new BaseResponse<>(ResponseCode.PARAMETER_ERROR);
             }
             //如果没有输入用户名，则默认用户名为账号
             if (userAddDTO.getUsername()==null||userAddDTO.getUsername().isEmpty()){
@@ -258,14 +265,14 @@ public class AdminController {
             user.setUsername(userAddDTO.getUsername());
             BeanUtils.copyProperties(userAddDTO,user);
             userService.addUser(user);
-            log.info("UserController.add success: add userAddDTO success which is {}", userAddDTO);
+            log.info("AdminController.add success: add userAddDTO success which is {}", userAddDTO);
             //获取用户信息
             User getUser = userService.getUserById(user.getId());
             UserResponseDTO userResponseDTO = new UserResponseDTO();
             BeanUtils.copyProperties(getUser,userResponseDTO);
             return new BaseResponse<>(ResponseCode.SUCCESS,userResponseDTO);
         }catch (Exception e){
-            log.error("UserController.addUser error: question dto is {}", userAddDTO, e);
+            log.error("AdminController.addUser error: question dto is {}", userAddDTO, e);
             return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
         }
     }
@@ -280,15 +287,15 @@ public class AdminController {
     public BaseResponse<Boolean> deleteUser(@PathVariable Long id) {
         //判断该id是否存在
         if (userService.getUserById(id) == null) {
-            log.error("UserController.deleteById error: the user not exist which is {}", id);
+            log.error("AdminController.deleteById error: the user not exist which is {}", id);
             return new BaseResponse<>(ResponseCode.NO_DATA);
         }
         try {
             userService.deleteUser(id);
-            log.info("UserController.deleteById success: delete user success which is {}", id);
+            log.info("AdminController.deleteById success: delete user success which is {}", id);
             return new BaseResponse<>(ResponseCode.SUCCESS);
         }catch (Exception e){
-            log.error("UserController.deleteById error: the user id is {}", id, e);
+            log.error("AdminController.deleteById error: the user id is {}", id, e);
             return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
         }
     }
@@ -305,16 +312,16 @@ public class AdminController {
         for (Long id : ids) {
             //判断id是否存在
             if (userService.getUserById(id) == null) {
-                log.error("UserController.deleteById error: the user not exist which is {}", id);
+                log.error("AdminController.deleteById error: the user not exist which is {}", id);
                 return new BaseResponse<>(ResponseCode.NO_DATA);
             }
         }
         try {
             userService.deleteUserByIds(ids);
-            log.info("UserController.deleteById success: delete user success which is {}", ids);
+            log.info("AdminController.deleteById success: delete user success which is {}", ids);
             return new BaseResponse<>(ResponseCode.SUCCESS);
         }catch (Exception e){
-            log.error("UserController.deleteById error: the user id is {}", ids, e);
+            log.error("AdminController.deleteById error: the user id is {}", ids, e);
             return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
         }
     }
@@ -330,7 +337,7 @@ public class AdminController {
     public BaseResponse<UserResponseDTO> updateUser(@RequestBody UserRequestDTO userDTO) {
         //判断用户id是否存在
         if (userService.getUserById(userDTO.getId()) == null) {
-            log.error("UserController.update error: the user not exist which is {}", userDTO);
+            log.error("AdminController.update error: the user not exist which is {}", userDTO);
             return new BaseResponse<>(ResponseCode.NO_DATA);
         }
         try{
@@ -338,10 +345,10 @@ public class AdminController {
             BeanUtils.copyProperties(userDTO,user);
             //前端通过查询原有数据，在原有数据的基础上修改，所以不需要判断数据是否为空
             userService.updateUser(user);
-            log.info("UserController.update success: update user success which is {}", userDTO);
+            log.info("AdminController.update success: update user success which is {}", userDTO);
             return new BaseResponse<>(ResponseCode.SUCCESS);
         }catch (Exception e){
-            log.error("UserController.update error: user dto is {}", userDTO, e);
+            log.error("AdminController.update error: user dto is {}", userDTO, e);
             return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
         }
     }
@@ -357,12 +364,12 @@ public class AdminController {
     public BaseResponse<UserResponseDTO> getUser(@PathVariable Long id) {
         User user = userService.getUserById(id);
         if (user == null) {
-            log.error("UserController.getById error: the user not exist which is {}", id);
+            log.error("AdminController.getById error: the user not exist which is {}", id);
             return new BaseResponse<>(ResponseCode.NO_DATA);
         }
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         BeanUtils.copyProperties(user,userResponseDTO);
-        log.info("UserController.getById success: get user success which is {}", id);
+        log.info("AdminController.getById success: get user success which is {}", id);
         return new BaseResponse<>(ResponseCode.SUCCESS,userResponseDTO);
     }
 
@@ -393,8 +400,105 @@ public class AdminController {
                     return userResponseDTO;
                 })
                 .collect(Collectors.toList());
-        log.info("UserController.listUser success: {}", userResponseDTOList);
+        log.info("AdminController.listUser success: {}", userResponseDTOList);
         return new BaseResponse<>(ResponseCode.SUCCESS, userResponseDTOList);
+    }
+
+    /**
+     * 新增题库
+     * @param questionBankAddDTO
+     * @return
+     */
+    @PostMapping("/bank/add")
+    @ApiOperation("新增题库")
+    public BaseResponse<QuestionBankResponseDTO> addBank(@RequestBody QuestionBankAddRequestDTO questionBankAddDTO) {
+        //必须要有题库名
+        if (questionBankAddDTO.getTitle() == null|| questionBankAddDTO.getTitle().isEmpty()) {
+            log.error("AdminController.add error: the title is bank witch is {}", questionBankAddDTO.getTitle());
+            return new BaseResponse<>(ResponseCode.PARAMETER_ERROR);
+        }
+        //判断该题库是否存在
+        QuestionBank dbQuestionBank = questionBankService.getBankByTitle(questionBankAddDTO.getTitle());
+        if (dbQuestionBank != null) {
+            log.error("AdminController.isExist error: the title is exists which is {}", questionBankAddDTO.getTitle());
+            return new BaseResponse<>(ResponseCode.ALREADY_EXIST_MESSAGE);
+        }
+        try {
+            QuestionBank questionBank = new QuestionBank();
+            BeanUtils.copyProperties(questionBankAddDTO, questionBank);
+            questionBank.setUserId(StpUtil.getLoginIdAsLong());
+            questionBankService.addBank(questionBank);
+            log.info("AdminController.add success: add questionBankAddDTO success which is {}", questionBankAddDTO);
+            QuestionBank bankByTitle = questionBankService.getBankByTitle(questionBankAddDTO.getTitle());
+            QuestionBankResponseDTO questionBankResponseDTO = new QuestionBankResponseDTO();
+            BeanUtils.copyProperties(bankByTitle, questionBankResponseDTO);
+            log.info("AdminController.add success: add questionBankAddDTO success which is {}", questionBankResponseDTO);
+            return new BaseResponse<>(ResponseCode.SUCCESS,questionBankResponseDTO);
+        }catch (Exception e){
+            log.error("AdminController.add error: questionBankAddDTO is {}", questionBankAddDTO, e);
+            return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
+        }
+    }
+
+
+    /**
+     * 根据id删除题库
+     * @param id
+     * @return
+     */
+    @PostMapping("/bank/delete/{id}")
+    @ApiOperation("根据id删除题库")
+    public BaseResponse<Boolean> deleteBankById(@PathVariable Long id) {
+        try {
+            //判断是否是正常的id并且不能重复删除
+            if (questionBankService.getQuestionBankById(id) == null) {
+                log.error("AdminController.deleteById error: the id is not exists which is {}", id);
+                return new BaseResponse<>(ResponseCode.NO_DATA);
+            }
+            //判断该题库下是否关联了题目，如果关联了，不能删除该题库，要先删除其中的题目
+            List<QuestionBankMapping> questionBankMappings = questionBankMappingService.listByBankId(id);
+            if (!questionBankMappings.isEmpty()) {
+                log.error("AdminController.deleteById error: the questionBank is not empty which is {}", id);
+                return new BaseResponse<>(ResponseCode.QUESTION_BANK_NOT_EMPTY);
+            }
+            questionBankService.deleteBank(id);
+            log.info("AdminController.deleteById success: delete questionBank success which is {}", id);
+            return new BaseResponse<>(ResponseCode.SUCCESS);
+        }catch (Exception e){
+            log.error("AdminController.deleteById error: id is {}", id, e);
+            return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
+        }
+    }
+
+    /**
+     * 批量删除
+     * @param ids
+     * @return
+     */
+    @PostMapping("/bank/deleteBatch")
+    @ApiOperation("批量删除题库")
+    public BaseResponse<Boolean> deleteBatch(@RequestBody Long[] ids) {
+        try {
+            //判断这些id在数据库是否存在
+            for (Long id : ids) {
+                if (questionBankService.getQuestionBankById(id) == null) {
+                    log.error("AdminController.deleteBatch error: the id is not exists which is {}", id);
+                    return new BaseResponse<>(ResponseCode.NO_DATA);
+                }
+            }
+            //判断该题库下有没有题目，如果有的话，不能删除该题库，要先删除其中的题目
+            Long countQuestion = questionBankMappingService.listByBankIds(ids);
+            if (countQuestion > 0){
+                return new BaseResponse<>(ResponseCode.QUESTION_BANK_NOT_EMPTY);
+            }
+            //删除所选题库
+            questionBankService.deleteBankBatch(ids);
+            log.info("AdminController.deleteByIds success: delete questionBank success which is {}", ids);
+            return new BaseResponse<>(ResponseCode.SUCCESS);
+        }catch (Exception e){
+            log.error("AdminController.deleteBatch error: ids is {}", ids, e);
+            return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
+        }
     }
 
 

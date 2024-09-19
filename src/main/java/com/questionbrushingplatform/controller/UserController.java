@@ -1,21 +1,15 @@
 package com.questionbrushingplatform.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.questionbrushingplatform.common.constant.MessageConstant;
-import com.questionbrushingplatform.common.constant.PasswordConstant;
 import com.questionbrushingplatform.common.constant.RedisConstant;
 import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
-import com.questionbrushingplatform.dto.request.PageDTO;
-import com.questionbrushingplatform.dto.request.UserAddRequestDTO;
 import com.questionbrushingplatform.dto.request.UserRequestDTO;
 import com.questionbrushingplatform.dto.request.UserUpdatePasswordRequestDTO;
 import com.questionbrushingplatform.dto.response.UserResponseDTO;
-
 import com.questionbrushingplatform.entity.User;
-import com.questionbrushingplatform.pojo.query.UserQuery;
 import com.questionbrushingplatform.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,7 +20,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.BitSet;

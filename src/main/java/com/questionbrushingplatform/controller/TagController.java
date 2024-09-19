@@ -5,6 +5,7 @@ import com.questionbrushingplatform.common.resp.ResponseCode;
 import com.questionbrushingplatform.entity.Tag;
 import com.questionbrushingplatform.service.TagService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ public class TagController {
      * @return Result<Boolean>
      */
     @PostMapping("/add")
+    @ApiOperation("新增标签")
     public BaseResponse<Tag> add(@RequestBody String name) {
         if (tagService.getTagByName(name) != null) {
             log.error("TagController.add error: the tag name already exists which is {}", name);
@@ -52,6 +54,7 @@ public class TagController {
      * @return Result<Boolean>
      */
     @PostMapping("/delete/{id}")
+    @ApiOperation("删除标签")
     public BaseResponse<Boolean> delete(@PathVariable Integer id) {
         if (!tagService.deleteTag(id)) {
             log.error("TagController.delete error: delete tag failed which is {}", id);
@@ -68,6 +71,7 @@ public class TagController {
      * @return BaseResponse<Tag>
      */
     @PostMapping("/update/{id}")
+    @ApiOperation("更新标签")
     public BaseResponse<Tag> update(@PathVariable Integer id, @RequestBody String name) {
         Tag res = tagService.getTagById(id);
         if (res == null) {
@@ -89,6 +93,7 @@ public class TagController {
      * @return Result<Tag>
      */
     @GetMapping("/get/{id}")
+    @ApiOperation("获取标签")
     public BaseResponse<Tag> get(@PathVariable Integer id) {
         Tag tag = tagService.getTagById(id);
         if (tag == null) {
@@ -104,6 +109,7 @@ public class TagController {
      * @return Result<List<Tag>>
      */
     @GetMapping("/list")
+    @ApiOperation("获取所有标签")
     public BaseResponse<List<Tag>> list(@RequestParam String name) {
         if (name.isEmpty()) {
             log.info("TagController.list success: list tags success");

@@ -8,6 +8,7 @@ import com.questionbrushingplatform.entity.QuestionBank;
 import com.questionbrushingplatform.entity.QuestionBankMapping;
 import com.questionbrushingplatform.service.*;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +45,7 @@ public class BankController {
      * @return BaseResponse
      */
     @GetMapping("/get")
+    @ApiOperation("获取题库")
     public BaseResponse<List<QuestionBank>> getBank() {
         List<QuestionBank> banks = bankService.list();
         return new BaseResponse<>(ResponseCode.SUCCESS, banks);
@@ -55,6 +57,7 @@ public class BankController {
      * @return BaseResponse
      */
     @GetMapping("/{id}/questions")
+    @ApiOperation("获取题库题目列表")
     public BaseResponse<List<QuestionResponseDTO>> getBankQuestions(@PathVariable Long id) {
         List<Long> questionIds = questionBankMappingService.listByBankId(id).stream()
                 .map(QuestionBankMapping::getQuestionId)
