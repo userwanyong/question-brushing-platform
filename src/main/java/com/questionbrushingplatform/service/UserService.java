@@ -15,53 +15,53 @@ public interface UserService extends IService<User> {
 
     /**
      * 根据用户名查询用户
-     * @param queryWrapper
+     * @param queryWrapper 查询条件
      */
     User getByUsername(LambdaQueryWrapper<User> queryWrapper);
 
     /**
      * 新增用户
-     * @param user
+     * @param user 用户信息
      */
     void addUser(User user);
 
     /**
      * 根据id查询用户
-     * @param id
-     * @return
+     * @param id 用户id
+     * @return 用户信息
      */
     User getUserById(Long id);
 
     /**
      * 删除用户
-     * @param id
+     * @param id 用户id
      */
     void deleteUser(Long id);
 
     /**
      * 批量删除用户
-     * @param ids
+     * @param ids 用户id
      */
     void deleteUserByIds(List<Long> ids);
 
     /**
      * 更新用户
-     * @param user
+     * @param user 用户信息
      */
     void updateUser(User user);
 
     /**
-     * 分页查询用户
-     * @param pageNum
-     * @param pageSize
-     * @return
+     * 获取用户列表
+     * @param pageNum 当前页码
+     * @param pageSize 每页数量
+     * @return 用户列表
      */
     Page<User> listUser(Integer pageNum, Integer pageSize);
 
     /**
      * 根据用户名查询用户
-     * @param username
-     * @return
+     * @param username 用户名
+     * @return 用户信息
      */
     User listUserByUsername(String username);
 

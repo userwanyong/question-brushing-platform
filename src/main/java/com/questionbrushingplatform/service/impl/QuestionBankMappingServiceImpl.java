@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.questionbrushingplatform.entity.QuestionBankMapping;
-import com.questionbrushingplatform.service.QuestionBankMappingService;
 import com.questionbrushingplatform.mapper.QuestionBankMappingMapper;
+import com.questionbrushingplatform.service.QuestionBankMappingService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +28,8 @@ public class QuestionBankMappingServiceImpl extends ServiceImpl<QuestionBankMapp
 
     /**
      * 根据题库 id 获取题目总数
-     * @param ids
-     * @return
+     * @param ids 题库 id
+     * @return 题目总数
      */
     public Long listByBankIds(Long[] ids) {
         LambdaQueryWrapper<QuestionBankMapping> queryWrapperQuestion = new LambdaQueryWrapper<>();
@@ -38,10 +38,10 @@ public class QuestionBankMappingServiceImpl extends ServiceImpl<QuestionBankMapp
     }
 
     /**
-     * 根据题目id和银行id获取题目银行映射
-     * @param questionId
-     * @param bankId
-     * @return
+     * 根据题目id和题库id获取题目题库映射
+     * @param questionId 题目id
+     * @param bankId 题库id
+     * @return 题目题库映射
      */
     public QuestionBankMapping getQuestionBankMappingById(Long questionId, Long bankId) {
         //构建查询条件

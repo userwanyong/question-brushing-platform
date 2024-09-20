@@ -2,15 +2,12 @@ package com.questionbrushingplatform.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.questionbrushingplatform.common.constant.PasswordConstant;
-import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
-import com.questionbrushingplatform.dto.request.QuestionBankAddRequestDTO;
-import com.questionbrushingplatform.dto.request.ReviewRequestDTO;
-import com.questionbrushingplatform.dto.request.UserAddRequestDTO;
-import com.questionbrushingplatform.dto.request.UserRequestDTO;
+import com.questionbrushingplatform.dto.request.*;
 import com.questionbrushingplatform.dto.response.QuestionBankResponseDTO;
 import com.questionbrushingplatform.dto.response.UserResponseDTO;
 import com.questionbrushingplatform.entity.*;
@@ -57,7 +54,7 @@ public class AdminController {
 
     /**
      * 获取待审核问题列表
-     * @return
+     * @return BaseResponse<List<Question>>
      */
     @GetMapping("/review/question/list")
     @ApiOperation("获取待审核问题列表")
@@ -75,8 +72,8 @@ public class AdminController {
 
     /**
      * 根据id获取待审核问题
-     * @param id
-     * @return
+     * @param id 待审核问题id
+     * @return BaseResponse<Question>
      */
     @GetMapping("/review/question/{id}")
     @ApiOperation("根据id获取待审核问题")
@@ -91,9 +88,9 @@ public class AdminController {
 
     /**
      * 通过审核问题
-     * @param id
-     * @param reviewRequestDTO
-     * @return
+     * @param id 待审核问题id
+     * @param reviewRequestDTO 审核请求
+     * @return 成功
      */
     @PostMapping("/review/question/{id}/pass")
     @ApiOperation("通过审核问题")
@@ -150,9 +147,9 @@ public class AdminController {
 
     /**
      * 驳回审核问题
-     * @param id
-     * @param reviewRequestDTO
-     * @return
+     * @param id 待审核问题id
+     * @param reviewRequestDTO 审核请求
+     * @return 失败
      */
     @PostMapping("/review/question/{id}/fail")
     @ApiOperation("驳回审核问题")
@@ -161,7 +158,7 @@ public class AdminController {
             Review review = new Review();
             review.setReviewerId(Long.valueOf(reviewRequestDTO.getReviewerId()));
             review.setReviewMsg(reviewRequestDTO.getReviewMsg());
-            review.setStatus(PASS);
+            review.setStatus(FAIL);
             review.setQuestionId(id);
             reviewService.addReview(review);
 
@@ -196,7 +193,7 @@ public class AdminController {
      * 添加题目到题库
      * @param questionId 题目id
      * @param bankId 题库id
-     * @return
+     * @return 成功/失败
      */
     @PostMapping("/question/add/{questionId}/{bankId}")
     @ApiOperation("新增题目到题库")
@@ -225,8 +222,8 @@ public class AdminController {
 
     /**
      * 新增用户
-     * @param userAddDTO
-     * @return
+     * @param userAddDTO 新增用户信息
+     * @return 用户信息
      */
     @PostMapping("/user/add")
     @ApiOperation("新增用户")
@@ -279,8 +276,8 @@ public class AdminController {
 
     /**
      * 单个删除用户
-     * @param id
-     * @return
+     * @param id 用户id
+     * @return 成功/失败
      */
     @DeleteMapping("/user/deleteById/{id}")
     @ApiOperation("单个删除用户")
@@ -303,8 +300,8 @@ public class AdminController {
 
     /**
      * 批量删除用户
-     * @param ids
-     * @return
+     * @param ids id列表
+     * @return 成功/失败
      */
     @DeleteMapping("/user/deleteByIds")
     @ApiOperation("批量删除用户")
@@ -329,8 +326,8 @@ public class AdminController {
 
     /**
      * 修改用户信息
-     * @param userDTO
-     * @return
+     * @param userDTO 用户信息
+     * @return 修改后的用户信息
      */
     @PutMapping("/user/update")
     @ApiOperation("修改用户信息")
@@ -356,8 +353,8 @@ public class AdminController {
 
     /**
      * 根据id查询用户
-     * @param id
-     * @return
+     * @param id id
+     * @return 用户信息
      */
     @GetMapping("/user/get/{id}")
     @ApiOperation("根据id查询用户")
@@ -375,9 +372,9 @@ public class AdminController {
 
     /**
      * 分页查询用户
-     * @param pageNum
-     * @param pageSize
-     * @return
+     * @param pageNum 当前页码
+     * @param pageSize 每页的数量
+     * @return 用户列表
      */
     @GetMapping("/user/list")
     @ApiOperation("分页查询用户")
@@ -406,8 +403,8 @@ public class AdminController {
 
     /**
      * 新增题库
-     * @param questionBankAddDTO
-     * @return
+     * @param questionBankAddDTO 题库信息
+     * @return 所添加的题库信息
      */
     @PostMapping("/bank/add")
     @ApiOperation("新增题库")
@@ -443,8 +440,8 @@ public class AdminController {
 
     /**
      * 根据id删除题库
-     * @param id
-     * @return
+     * @param id 题库id
+     * @return 成功/失败
      */
     @PostMapping("/bank/delete/{id}")
     @ApiOperation("根据id删除题库")
@@ -472,8 +469,8 @@ public class AdminController {
 
     /**
      * 批量删除
-     * @param ids
-     * @return
+     * @param ids id数组
+     * @return 成功/失败
      */
     @PostMapping("/bank/deleteBatch")
     @ApiOperation("批量删除题库")
@@ -493,10 +490,52 @@ public class AdminController {
             }
             //删除所选题库
             questionBankService.deleteBankBatch(ids);
-            log.info("AdminController.deleteByIds success: delete questionBank success which is {}", ids);
+            log.info("AdminController.deleteByIds success: delete questionBank success which is {}", (Object) ids);
             return new BaseResponse<>(ResponseCode.SUCCESS);
         }catch (Exception e){
             log.error("AdminController.deleteBatch error: ids is {}", ids, e);
+            return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
+        }
+    }
+
+
+    /**
+     * 修改题库
+     * @param questionBankUpdateDTO 所要修改的题库信息
+     * @return 修改后的题库信息
+     */
+    @PostMapping("/bank/update")
+    @ApiOperation("修改题库")
+    public BaseResponse<QuestionBankResponseDTO> updateBank(@RequestBody QuestionBankUpdateRequestDTO questionBankUpdateDTO) {
+        try {
+            //判断该题库是否存在
+            if (questionBankService.getQuestionBankById(questionBankUpdateDTO.getId())==null) {
+                log.error("AdminController.update error: the question bank does not exist which is {}", questionBankUpdateDTO.getId());
+                return new BaseResponse<>(ResponseCode.NO_DATA);
+            }
+            //判断是否传入了题库名
+            if (StringUtils.isEmpty(questionBankUpdateDTO.getTitle())) {
+                log.error("AdminController.update error: the title is empty which is {}", questionBankUpdateDTO.getTitle());
+                return new BaseResponse<>(ResponseCode.PARAMETER_ERROR);
+            }
+            //判断修改后的题库名是否已存在
+            QuestionBank dbQuestionBank = questionBankService.getBankByTitle(questionBankUpdateDTO.getTitle());
+            if (dbQuestionBank != null) {
+                log.error("AdminController.update error: the title is exists which is {}", questionBankUpdateDTO.getTitle());
+                return new BaseResponse<>(ResponseCode.ALREADY_EXIST_MESSAGE);
+            }
+            //更新
+            QuestionBank questionBank = new QuestionBank();
+            BeanUtils.copyProperties(questionBankUpdateDTO,questionBank);
+            questionBankService.updateBank(questionBank);
+            log.info("AdminController.update success: update questionBank success which is {}", questionBankUpdateDTO);
+            //封装返回数据
+            QuestionBankResponseDTO questionBankResponseDTO = new QuestionBankResponseDTO();
+            QuestionBank questionBankById = questionBankService.getQuestionBankById(questionBank.getId());
+            BeanUtils.copyProperties(questionBankById, questionBankResponseDTO);
+            return new BaseResponse<>(ResponseCode.SUCCESS, questionBankResponseDTO);
+        }catch (Exception e){
+            log.error("AdminController.update error: questionBankUpdateDTO is {}", questionBankUpdateDTO, e);
             return new BaseResponse<>(ResponseCode.SYSTEM_ERROR);
         }
     }

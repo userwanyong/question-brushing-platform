@@ -42,6 +42,12 @@ public class QuestionController {
 
     private final TagService tagService;
 
+
+    /**
+     * 添加题目
+     * @param questionDTO 所要添加的题目信息
+     * @return 添加的题目信息
+     */
     @PostMapping("/add")
     @ApiOperation("添加题目")
     @Transactional(rollbackFor = Exception.class)
@@ -90,6 +96,12 @@ public class QuestionController {
         }
     }
 
+
+    /**
+     * 删除题目
+     * @param id 所要删除的id
+     * @return 成功/失败
+     */
     @PostMapping("/delete/{id}")
     @ApiOperation("删除题目")
     @Transactional(rollbackFor = Exception.class)
@@ -107,6 +119,12 @@ public class QuestionController {
         }
     }
 
+    /**
+     * 更新题目
+     * @param id 所要更新的题目id
+     * @param questionDTO 所要更新的题目信息
+     * @return 更新后的题目信息
+     */
     @PostMapping("/update/{id}")
     @ApiOperation("更新题目")
     @Transactional(rollbackFor = Exception.class)
@@ -180,6 +198,11 @@ public class QuestionController {
         }
     }
 
+    /**
+     * 获取题目
+     * @param id 所要获取的题目id
+     * @return 题目信息
+     */
     @GetMapping("/get/{id}")
     @ApiOperation("获取题目")
     public BaseResponse<QuestionResponseDTO> getQuestion(@PathVariable String id) {
@@ -205,6 +228,12 @@ public class QuestionController {
         return new BaseResponse<>(ResponseCode.SUCCESS, questionResponseDTO);
     }
 
+    /**
+     * 获取题目列表
+     * @param pageNum 当前页码
+     * @param pageSize 每页数量
+     * @return 题目列表
+     */
     @GetMapping("/list")
     @ApiOperation("获取题目列表")
     public BaseResponse<List<QuestionResponseDTO>> listQuestions(@RequestParam(defaultValue = "1") Integer pageNum,

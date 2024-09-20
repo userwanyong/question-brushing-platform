@@ -12,58 +12,40 @@ public interface QuestionBankService extends IService<QuestionBank> {
 
     /**
      * 新增题库
-     * @param questionBank
+     * @param questionBank 题库信息
      */
-    boolean addBank(QuestionBank questionBank);
+    void addBank(QuestionBank questionBank);
 
     /**
-     * 根据id获取题库
-     * @param id
-     * @return
+     * 根据id查询题库
+     * @param id 题库id
+     * @return 题库信息
      */
     QuestionBank getQuestionBankById(Long id);
 
     /**
-     * 根据title获取题库
-     * @param title
-     * @return
+     * 根据标题查询题库
+     * @param title 题库标题
+     * @return 题库信息
      */
     QuestionBank getBankByTitle(String title);
 
     /**
      * 删除题库
-     * @param id
-     * @return
+     * @param id 题库id
      */
-    boolean deleteBank(Long id);
+    void deleteBank(Long id);
 
     /**
-     * 根据id批量删除题库
-     * @param ids
+     * 批量删除题库
+     * @param ids 题库id数组
      */
     void deleteBankBatch(Long[] ids);
 
-
-//    /**
-//     * 根据id删除题库
-//     * @param id
-//     */
-//    void deleteById(Long id);
-
-//    /**
-//     * 根据id批量删除题库
-//     * @param ids
-//     */
-//    void deleteByIds(Long[] ids);
-
-
-//    /**
-//     * 分页查询题库
-//     * @param questionBankQuery
-//     * @return
-//     */
-//    PageDTO<QuestionBankResponseDTO> selectByPage(QuestionBankQuery questionBankQuery);
-
-
+    /**
+     * 更新题库
+     * @param questionBank 题库信息
+     */
+    void updateBank(QuestionBank questionBank);
 
 }

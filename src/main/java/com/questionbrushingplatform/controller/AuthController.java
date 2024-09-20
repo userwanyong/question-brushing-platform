@@ -38,8 +38,8 @@ public class AuthController {
 
     /**
      * 登录
-     * @param loginAndRegisterDTO
-     * @return
+     * @param loginAndRegisterDTO 用户登录信息
+     * @return 该用户信息
      */
     @PostMapping("/login")
     @ApiOperation(value = "登录")
@@ -81,8 +81,8 @@ public class AuthController {
 
     /**
      * 注册
-     * @param loginAndRegisterDTO
-     * @return
+     * @param loginAndRegisterDTO 用户注册信息
+     * @return 成功/失败
      */
     @PostMapping("/register")
     @ApiOperation(value = "注册")
@@ -118,7 +118,7 @@ public class AuthController {
 
     /**
      * 退出登录
-     * @return
+     * @return 成功/失败
      */
     @PostMapping("/logout")
     @ApiOperation(value = "退出登录")

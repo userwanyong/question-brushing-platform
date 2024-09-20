@@ -4,11 +4,13 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 题目表
+ * @author 永
  * @TableName question
  */
 @TableName(value ="question")
@@ -70,6 +72,7 @@ public class Question implements Serializable {
     @JsonProperty("is_delete")
     private Integer isDelete;
 
+    @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

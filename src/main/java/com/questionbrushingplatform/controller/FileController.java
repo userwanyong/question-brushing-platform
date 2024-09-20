@@ -28,9 +28,9 @@ public class FileController {
 
     /**
      * 文件上传
-     * @param file
-     * @return
-     * @throws IOException
+     * @param file 文件
+     * @return url
+     * @throws IOException io
      */
     @PostMapping("/upload")
     @ApiOperation(value = "上传文件")

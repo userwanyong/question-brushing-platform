@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
  * 
+ * @author 永
  * @TableName tag
  */
 @TableName(value ="tag")
@@ -48,6 +50,7 @@ public class Tag implements Serializable {
     @JsonProperty("is_delete")
     private Integer isDeleted;
 
+    @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

@@ -43,8 +43,8 @@ public class UserController {
 
     /**
      * 修改当前用户信息
-     * @param userDTO
-     * @return
+     * @param userDTO 所要修改的用户信息
+     * @return 修改后的用户信息
      */
     @PutMapping("/update")
     @ApiOperation("修改当前用户信息")
@@ -64,12 +64,12 @@ public class UserController {
 
     /**
      * 修改当前登录用户密码
-     * @param userUpdatePasswordDTO
-     * @return
+     * @param userUpdatePasswordDTO 修改密码信息
+     * @return 成功/失败
      */
     @PutMapping("/updatePassword")
     @ApiOperation("修改当前登录用户密码")
-    public BaseResponse<UserUpdatePasswordRequestDTO> updatePassword(@RequestBody UserUpdatePasswordRequestDTO userUpdatePasswordDTO) {
+    public BaseResponse<Boolean> updatePassword(@RequestBody UserUpdatePasswordRequestDTO userUpdatePasswordDTO) {
         try {
             //要保证密码长度符合规定
             if (userUpdatePasswordDTO.getNewPassword().length() < 6 || userUpdatePasswordDTO.getNewPassword().length() > 16){
@@ -107,7 +107,7 @@ public class UserController {
 
     /**
      * 获取当前用户信息
-     * @return
+     * @return 当前用户信息
      */
     @GetMapping("/get")
     @ApiOperation("获取当前用户信息")
@@ -126,7 +126,7 @@ public class UserController {
 
     /**
      * 添加用户签到记录
-     * @return
+     * @return 成功/失败
      */
     @PostMapping("/addSignIn")
     @ApiOperation("添加用户签到记录")
@@ -163,8 +163,8 @@ public class UserController {
 
     /**
      * 获取用户签到记录
-     * @param year
-     * @return
+     * @param year 年份
+     * @return 用户签到记录列表
      */
     @GetMapping("/getSignInRecord")
     @ApiOperation("获取用户签到记录")

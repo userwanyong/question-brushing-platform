@@ -15,18 +15,18 @@ public interface QuestionBankMappingService extends IService<QuestionBankMapping
     List<QuestionBankMapping> listByBankId(Long bankId);
 
     /**
-     * 通过题库id列表获取题目题库映射总数
-     * @param ids
-     * @return
+     * 根据题库 id 获取题目总数
+     * @param ids 题库 id
+     * @return 题目总数
      */
     Long listByBankIds(Long[] ids);
 
 
     /**
-     * 通过题目id和题库id获取题目题库映射
-     * @param questionId
-     * @param bankId
-     * @return
+     * 根据题目id和题库id获取题目题库映射
+     * @param questionId 题目id
+     * @param bankId 题库id
+     * @return 题目题库映射
      */
     QuestionBankMapping getQuestionBankMappingById(Long questionId, Long bankId);
 
