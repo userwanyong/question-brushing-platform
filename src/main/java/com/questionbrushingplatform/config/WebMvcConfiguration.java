@@ -3,6 +3,7 @@ package com.questionbrushingplatform.config;
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
+import com.questionbrushingplatform.common.constant.NumberConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,14 +38,14 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         registry.addInterceptor(new SaInterceptor(handler -> {
 
                     // 角色校验 -- 拦截以 admin 开头的路由，必须是 admin 角色才可以通过认证
-                    SaRouter.match("/admin/**", r -> StpUtil.checkRole("admin"));
+                    SaRouter.match("/admin/**", r -> StpUtil.checkRole(String.valueOf(NumberConstant.SUPER_ADMIN)));
 
-                    SaRouter.match("/question/add", r -> StpUtil.checkRole("admin"));
-                    SaRouter.match("/question/delete/{id}", r -> StpUtil.checkRole("admin"));
-                    SaRouter.match("/question/update/{id}", r -> StpUtil.checkRole("admin"));
-                    SaRouter.match("/tag/add", r -> StpUtil.checkRole("admin"));
-                    SaRouter.match("/tag/delete/{id}", r -> StpUtil.checkRole("admin"));
-                    SaRouter.match("/tag/update/{id}", r -> StpUtil.checkRole("admin"));
+                    SaRouter.match("/question/add", r -> StpUtil.checkRole(String.valueOf(NumberConstant.SUPER_ADMIN)));
+                    SaRouter.match("/question/delete/{id}", r -> StpUtil.checkRole(String.valueOf(NumberConstant.SUPER_ADMIN)));
+                    SaRouter.match("/question/update/{id}", r -> StpUtil.checkRole(String.valueOf(NumberConstant.SUPER_ADMIN)));
+                    SaRouter.match("/tag/add", r -> StpUtil.checkRole(String.valueOf(NumberConstant.SUPER_ADMIN)));
+                    SaRouter.match("/tag/delete/{id}", r -> StpUtil.checkRole(String.valueOf(NumberConstant.SUPER_ADMIN)));
+                    SaRouter.match("/tag/update/{id}", r -> StpUtil.checkRole(String.valueOf(NumberConstant.SUPER_ADMIN)));
 
                 })).addPathPatterns("/**"); //将自定义拦截器应用于所有路径
     }

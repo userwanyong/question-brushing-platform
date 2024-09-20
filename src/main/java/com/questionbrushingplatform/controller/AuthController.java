@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.questionbrushingplatform.common.constant.MessageConstant;
+import com.questionbrushingplatform.common.constant.NumberConstant;
 import com.questionbrushingplatform.common.exception.BaseException;
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
@@ -111,7 +112,7 @@ public class AuthController {
         if (user.getUsername()==null||user.getUsername().isEmpty()){
             user.setUsername(user.getUsername());
         }
-        user.setUserRole("user");
+        user.setUserRole(NumberConstant.USER);
         userService.addUser(user);
         return new BaseResponse<>(ResponseCode.SUCCESS);
     }

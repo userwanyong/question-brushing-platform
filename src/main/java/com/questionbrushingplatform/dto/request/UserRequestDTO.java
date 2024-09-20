@@ -33,7 +33,7 @@ public class UserRequestDTO {
     private String userProfile;
 
     @JsonProperty("user_role")
-    private String userRole;
+    private Integer userRole;
 
 
 }

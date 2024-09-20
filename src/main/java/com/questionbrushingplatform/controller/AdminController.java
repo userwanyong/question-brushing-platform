@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.questionbrushingplatform.common.constant.NumberConstant;
 import com.questionbrushingplatform.common.constant.PasswordConstant;
 import com.questionbrushingplatform.common.resp.BaseResponse;
 import com.questionbrushingplatform.common.resp.ResponseCode;
@@ -32,10 +33,6 @@ import java.util.stream.Collectors;
 @Api(tags = "管理模块")
 @Slf4j
 public class AdminController {
-
-    private static final Integer PASS = 1;
-
-    private static final Integer FAIL = 2;
 
     private final UserService userService;
 
@@ -101,7 +98,7 @@ public class AdminController {
             question.setTitle(reviewRequestDTO.getQuestionInfo().getTitle());
             question.setAnswer(reviewRequestDTO.getQuestionInfo().getAnswer());
             question.setPriority(reviewRequestDTO.getPriority());
-            question.setStatus(PASS);
+            question.setStatus(NumberConstant.PASS);
             questionService.updateQuestion(question);
             List<QuestionTagsMapping> tags = reviewRequestDTO.getQuestionInfo().getTags().stream()
                     .map(tagService::getTagById)
@@ -115,7 +112,7 @@ public class AdminController {
             Review review = new Review();
             review.setReviewerId(Long.valueOf(reviewRequestDTO.getReviewerId()));
             review.setReviewMsg(reviewRequestDTO.getReviewMsg());
-            review.setStatus(PASS);
+            review.setStatus(NumberConstant.PASS);
             review.setQuestionId(id);
             reviewService.addReview(review);
 
@@ -158,7 +155,7 @@ public class AdminController {
             Review review = new Review();
             review.setReviewerId(Long.valueOf(reviewRequestDTO.getReviewerId()));
             review.setReviewMsg(reviewRequestDTO.getReviewMsg());
-            review.setStatus(FAIL);
+            review.setStatus(NumberConstant.FAIL);
             review.setQuestionId(id);
             reviewService.addReview(review);
 
@@ -241,9 +238,9 @@ public class AdminController {
                 log.error("AdminController.add error: the userAccount already exists which is {}", userAddDTO.getUsername());
                 return new BaseResponse<>(ResponseCode.ALREADY_EXIST);
             }
-            //如果不存在，则新增
-            if (userAddDTO.getUserRole()==null|| userAddDTO.getUserRole().isEmpty()){
-                userAddDTO.setUserRole("user");//默认角色为用户
+            //如果不存在，则新增，默认角色为用户
+            if (userAddDTO.getUserRole()==null){
+                userAddDTO.setUserRole(NumberConstant.USER);
             }
             //如果没有输入密码，则默认密码为123456
             if (userAddDTO.getPassword()==null||userAddDTO.getPassword().isEmpty()) {

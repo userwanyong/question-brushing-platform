@@ -45,7 +45,7 @@ public class User implements Serializable {
     private String userProfile;
 
     @TableField("user_role")
-    private String userRole;
+    private Integer userRole;
 
     @TableField("created_time")
     private LocalDateTime createdTime;

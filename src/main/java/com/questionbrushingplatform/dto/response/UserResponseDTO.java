@@ -37,7 +37,7 @@ public class UserResponseDTO {
     private String userProfile;
 
     @JsonProperty("user_role")
-    private String userRole;
+    private Integer userRole;
 
     @JsonProperty("created_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -2,6 +2,7 @@ package com.questionbrushingplatform.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,7 +38,7 @@ public class LoginResponseDTO {
     private String userProfile;
 
     @JsonProperty("user_role")
-    private String userRole;
+    private Integer userRole;
 
     @JsonProperty("created_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

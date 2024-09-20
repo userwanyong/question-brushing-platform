@@ -45,7 +45,7 @@ public class StpInterfaceImpl implements StpInterface {
         User user = userService.getById((Serializable) loginId);
         // 本 list 仅做模拟，实际项目中要根据具体业务逻辑来查询角色
         List<String> list = new ArrayList<>();
-        list.add(user.getUserRole());
+        list.add(String.valueOf(user.getUserRole()));
         return list;
     }
 }
