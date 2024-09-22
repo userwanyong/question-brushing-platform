@@ -337,6 +337,10 @@ public class AdminController {
         try{
             User user = new User();
             BeanUtils.copyProperties(userDTO,user);
+            //如果密码没有传入，查询数据库，使用原密码
+            if (userDTO.getPassword() == null || userDTO.getPassword().isEmpty()) {
+                user.setPassword(userService.getUserById(userDTO.getId()).getPassword());
+            }
             //前端通过查询原有数据，在原有数据的基础上修改，所以不需要判断数据是否为空
             userService.updateUser(user);
             log.info("AdminController.update success: update user success which is {}", userDTO);
@@ -415,7 +419,7 @@ public class AdminController {
         QuestionBank dbQuestionBank = questionBankService.getBankByTitle(questionBankAddDTO.getTitle());
         if (dbQuestionBank != null) {
             log.error("AdminController.isExist error: the title is exists which is {}", questionBankAddDTO.getTitle());
-            return new BaseResponse<>(ResponseCode.ALREADY_EXIST_MESSAGE);
+            return new BaseResponse<>(ResponseCode.ALREADY_EXIST);
         }
         try {
             QuestionBank questionBank = new QuestionBank();
@@ -519,7 +523,7 @@ public class AdminController {
             QuestionBank dbQuestionBank = questionBankService.getBankByTitle(questionBankUpdateDTO.getTitle());
             if (dbQuestionBank != null) {
                 log.error("AdminController.update error: the title is exists which is {}", questionBankUpdateDTO.getTitle());
-                return new BaseResponse<>(ResponseCode.ALREADY_EXIST_MESSAGE);
+                return new BaseResponse<>(ResponseCode.ALREADY_EXIST);
             }
             //更新
             QuestionBank questionBank = new QuestionBank();

@@ -52,6 +52,10 @@ public class UserController {
         try {
             User user = new User();
             BeanUtils.copyProperties(userDTO,user);
+            //如果密码没有传入，查询数据库，使用原密码
+            if (userDTO.getPassword() == null || userDTO.getPassword().isEmpty()) {
+                user.setPassword(userService.getUserById(StpUtil.getLoginIdAsLong()).getPassword());
+            }
             user.setId(StpUtil.getLoginIdAsLong());
             userService.updateUser(user);
             log.info("UserController.updateCurrentInfo success: {}", user);
@@ -74,25 +78,25 @@ public class UserController {
             //要保证密码长度符合规定
             if (userUpdatePasswordDTO.getNewPassword().length() < 6 || userUpdatePasswordDTO.getNewPassword().length() > 16){
                 log.error("UserController.updatePassword error: the newPassword length not allowed which is {}", userUpdatePasswordDTO.getNewPassword());
-                throw new BaseException(MessageConstant.ERROR_DATABASE);
+                return new BaseResponse<>(ResponseCode.ERROR_DATABASE);
             }
             if (userUpdatePasswordDTO.getOldPassword().length() < 6 || userUpdatePasswordDTO.getOldPassword().length() > 16){
                 log.error("UserController.updatePassword error: the oldPassword length not allowed which is {}", userUpdatePasswordDTO.getOldPassword());
-                throw new BaseException(MessageConstant.ERROR_DATABASE);
+                return new BaseResponse<>(ResponseCode.ERROR_DATABASE);
             }
             if (userUpdatePasswordDTO.getConfirmPassword().length() < 6 || userUpdatePasswordDTO.getConfirmPassword().length() > 16){
                 log.error("UserController.updatePassword error: the confirmPassword length not allowed which is {}", userUpdatePasswordDTO.getConfirmPassword());
-                throw new BaseException(MessageConstant.ERROR_DATABASE);
+                return new BaseResponse<>(ResponseCode.ERROR_DATABASE);
             }
             Long currentId = StpUtil.getLoginIdAsLong();
             User user = userService.getUserById(currentId);
             if (!user.getPassword().equals(userUpdatePasswordDTO.getOldPassword())){
                 log.error("UserController.updatePassword error: the oldPassword is not correct which is {}", userUpdatePasswordDTO.getOldPassword());
-                throw new BaseException(MessageConstant.OLD_PASSWORD_ERROR);
+                return new BaseResponse<>(ResponseCode.OLD_PASSWORD_ERROR);
             }
             if (!userUpdatePasswordDTO.getNewPassword().equals(userUpdatePasswordDTO.getConfirmPassword())){
                 log.error("UserController.updatePassword error: the newPassword and confirmPassword is not same which is {}", userUpdatePasswordDTO.getNewPassword());
-                throw new BaseException(MessageConstant.CONFIRM_PASSWORD_ERROR);
+                return new BaseResponse<>(ResponseCode.CONFIRM_PASSWORD_ERROR);
             }
             user.setPassword(userUpdatePasswordDTO.getNewPassword());
             userService.updateUser(user);
